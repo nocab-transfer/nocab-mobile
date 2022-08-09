@@ -8,15 +8,6 @@ import 'package:provider/provider.dart';
 class MainScreen extends StatelessWidget {
   const MainScreen({Key? key}) : super(key: key);
 
-  /*@override
-  onConnectionEstablished(Socket socket, List<FileInfo> files, SubClientNew subClient) {
-    showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (context) => SenderDialog(files: files, serverDeviceInfo: qrResult),
-            );
-  }*/
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
