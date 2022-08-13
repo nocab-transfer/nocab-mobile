@@ -1,3 +1,5 @@
+import 'package:nocab/models/deviceinfo_model.dart';
+
 class FileInfo {
   String? name;
   int? byteSize;
@@ -48,28 +50,25 @@ class ShareResponse {
 }
 
 class ShareRequest {
-  late String? senderName;
-  late String senderOpSystem;
-  late int port;
   late List<FileInfo> files;
+  late DeviceInfo deviceInfo;
+  late int transferPort;
   late String? uniqueId;
 
-  ShareRequest({required this.senderName, required this.senderOpSystem, required this.files, required this.port, required this.uniqueId});
+  ShareRequest({required this.files, required this.deviceInfo, required this.transferPort, required this.uniqueId});
 
   ShareRequest.fromJson(Map<String, dynamic> json) {
-    senderName = json['senderName'];
-    senderOpSystem = json['senderOpSystem'];
-    port = json['port'];
     files = List<FileInfo>.from(json['files'].map((x) => FileInfo.fromJson(x)));
+    deviceInfo = DeviceInfo.fromJson(json['deviceInfo']);
+    transferPort = json['transferPort'];
     uniqueId = json['uniqueId'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> map = <String, dynamic>{};
-    map['senderName'] = senderName;
-    map['senderOpSystem'] = senderOpSystem;
-    map['port'] = port;
     map['files'] = List<dynamic>.from(files.map((x) => x.toJson()));
+    map['deviceInfo'] = deviceInfo.toJson();
+    map['transferPort'] = transferPort;
     map['uniqueId'] = uniqueId;
     return map;
   }
