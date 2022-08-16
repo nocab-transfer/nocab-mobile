@@ -27,7 +27,6 @@ class RequestRejectedView extends StatelessWidget {
                   Column(
                     children: [
                       ShaderMask(
-                        //blendMode: BlendMode.colorDodge,
                         shaderCallback: (bounds) => const RadialGradient(
                           center: Alignment.center,
                           radius: 0.5,
@@ -36,7 +35,6 @@ class RequestRejectedView extends StatelessWidget {
                         ).createShader(bounds),
                         child: const Icon(Icons.close_rounded, size: 50, color: Colors.white),
                       ),
-                      //Icon(Icons.celebration_rounded, size: 50, color: Colors.),
                       const SizedBox(height: 16),
                       Text(
                         "Request Rejected",
@@ -44,7 +42,6 @@ class RequestRejectedView extends StatelessWidget {
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 4),
-
                       Text(
                         message ?? "No message provided",
                         style: const TextStyle(fontSize: 12, color: Colors.grey),

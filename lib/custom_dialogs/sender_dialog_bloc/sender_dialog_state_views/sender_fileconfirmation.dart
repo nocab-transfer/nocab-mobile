@@ -71,13 +71,9 @@ class FileConfirmationView extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => QrScanner())).then((qrResult) {
                       if (qrResult is DeviceInfo) _onAccepted(qrResult, files);
-                      //client.send(qrResult, widget.files);
                     }),
                     style: ElevatedButton.styleFrom(
-                      //minimumSize: Size(MediaQuery.of(context).size.width - 16, 70),
                       fixedSize: const Size(100, 40),
-                      //maximumSize: const Size(150, 100),
-                      //padding: const EdgeInsets.symmetric(horizontal: 48.0, vertical: 16.0),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
                     ),
                     child: Text(

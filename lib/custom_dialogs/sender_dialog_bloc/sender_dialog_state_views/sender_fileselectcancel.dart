@@ -32,7 +32,6 @@ class FileSelectCancelView extends StatelessWidget {
                       ).createShader(bounds),
                       child: const Icon(Icons.close_rounded, size: 50),
                     ),
-                    //Icon(Icons.celebration_rounded, size: 50, color: Colors.),
                     const SizedBox(height: 16),
                     Text(
                       "No File Selected",
