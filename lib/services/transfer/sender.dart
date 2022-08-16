@@ -107,7 +107,7 @@ Future<void> _dataHandler(List<dynamic> args) async {
         filesTransferred: filesTransferred,
         currentFile: currentFile,
         speed: ((totalByteCount - totalByteCountBefore) * 1000 / duration.inMilliseconds) / 1024 / 1024,
-        progress: (100 * totalByteCount / currentFile.byteSize!) > 100 ? 100 : (100 * totalByteCount / currentFile.byteSize!),
+        progress: (100 * totalByteCount / currentFile.byteSize) > 100 ? 100 : (100 * totalByteCount / currentFile.byteSize),
         deviceInfo: deviceInfo,
       ),
     );
@@ -154,7 +154,7 @@ Future<void> _dataHandler(List<dynamic> args) async {
             filesTransferred: filesTransferred,
             currentFile: message.currentFile,
             speed: ((totalByteCount - totalByteCountBefore) * 1000 / duration.inMilliseconds) / 1024 / 1024,
-            progress: (100 * totalByteCount / currentFile.byteSize!) > 100 ? 100 : (100 * totalByteCount / currentFile.byteSize!),
+            progress: (100 * totalByteCount / currentFile.byteSize) > 100 ? 100 : (100 * totalByteCount / currentFile.byteSize),
             deviceInfo: deviceInfo,
           ),
         );

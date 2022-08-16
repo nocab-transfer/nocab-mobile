@@ -1,10 +1,10 @@
 import 'package:nocab/models/deviceinfo_model.dart';
 
 class FileInfo {
-  String? name;
-  int? byteSize;
-  bool? isEncrypted;
-  String? hash;
+  late String name;
+  late int byteSize;
+  late bool isEncrypted;
+  late String hash;
   String? path; //local
 
   FileInfo({required this.name, required this.byteSize, required this.isEncrypted, required this.hash, this.path});
@@ -31,7 +31,7 @@ class FileInfo {
 }
 
 class ShareResponse {
-  bool? response;
+  late bool response;
   String? info;
 
   ShareResponse({required this.response, this.info});
@@ -55,7 +55,7 @@ class ShareRequest {
   late int transferPort;
   late String? uniqueId;
 
-  ShareRequest({required this.files, required this.deviceInfo, required this.transferPort, required this.uniqueId});
+  ShareRequest({required this.files, required this.deviceInfo, required this.transferPort, this.uniqueId});
 
   ShareRequest.fromJson(Map<String, dynamic> json) {
     files = List<FileInfo>.from(json['files'].map((x) => FileInfo.fromJson(x)));

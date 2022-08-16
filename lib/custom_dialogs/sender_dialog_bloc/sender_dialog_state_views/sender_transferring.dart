@@ -131,11 +131,11 @@ class TransferringView extends StatelessWidget {
                                     children: [
                                       Padding(
                                         padding: const EdgeInsets.symmetric(vertical: 2.0),
-                                        child: Text(currentFile.name ?? "File", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurfaceVariant), maxLines: 2, overflow: TextOverflow.ellipsis),
+                                        child: Text(currentFile.name, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurfaceVariant), maxLines: 2, overflow: TextOverflow.ellipsis),
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.symmetric(vertical: 2.0),
-                                        child: Text(((currentFile.byteSize ?? 0) / 1024 / 1024).toStringAsFixed(2) + "MB", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w200, color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                                        child: Text((currentFile.byteSize / 1024 / 1024).toStringAsFixed(2) + "MB", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w200, color: Theme.of(context).colorScheme.onSurfaceVariant)),
                                       ),
                                     ],
                                   ),

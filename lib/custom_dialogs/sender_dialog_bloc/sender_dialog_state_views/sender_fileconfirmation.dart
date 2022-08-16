@@ -40,59 +40,10 @@ class FileConfirmationView extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Container(
-                  height: files.length * 66 > 350 ? 350 : files.length * 66,
-                  width: MediaQuery.of(context).size.width - 50,
-                  color: Theme.of(context).colorScheme.surface,
-                  child: ListView.builder(
-                    itemCount: files.length,
-                    itemBuilder: (context, index) {
-                      return SizedBox(
-                        height: 66,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Container(
-                                    width: 50,
-                                    height: 50,
-                                    decoration: const BoxDecoration(
-                                      color: Colors.red,
-                                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                                    ),
-                                    child: Center(child: Text(files[index].name!.split('.').last.toUpperCase(), style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold))),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: MediaQuery.of(context).size.width / 1.7,
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        files[index].name ?? "Error",
-                                        maxLines: 2,
-                                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      Text(files[index].byteSize!.formatBytes(), style: const TextStyle(fontSize: 12)),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ),
+                child: Container(),
               ),
               Text(
-                "${files.length} files\nTotal size: " + (files.map((e) => e.byteSize!).reduce((a, b) => a + b)).formatBytes(),
+                "${files.length} files\nTotal size: " + (files.map((e) => e.byteSize).reduce((a, b) => a + b)).formatBytes(),
                 style: const TextStyle(fontSize: 12),
                 textAlign: TextAlign.center,
               ),
