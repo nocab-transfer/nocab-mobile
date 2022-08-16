@@ -44,7 +44,7 @@ class FileConfirmationView extends StatelessWidget {
                 child: FileList(
                   files: files,
                   height: files.length * 66 > 350 ? 350 : files.length * 66,
-                  width: MediaQuery.of(context).size.width - 5,
+                  width: MediaQuery.of(context).size.width - 50,
                 ),
               ),
               Text(
