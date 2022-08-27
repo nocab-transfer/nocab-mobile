@@ -12,10 +12,9 @@ class FileList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: height,
       width: width,
-      color: Theme.of(context).colorScheme.surface,
       child: ListView.builder(
         itemCount: files.length,
         itemBuilder: (context, index) {

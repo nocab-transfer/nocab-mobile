@@ -66,7 +66,7 @@ class SenderDialogCubit extends Cubit<SenderDialogState> {
               : 'Unknown',
     );
 
-    socket.write(base64.encode(utf8.encode(json.encode(shareRequest))));
+    socket.write(base64.encode(utf8.encode(json.encode(shareRequest.toJson()))));
 
     emit(RequestSent(serverDeviceInfo));
 

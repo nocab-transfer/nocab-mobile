@@ -6,6 +6,7 @@ class FileInfo {
   late bool isEncrypted;
   late String hash;
   String? path; //local
+  String? subDirectory;
 
   FileInfo({required this.name, required this.byteSize, required this.isEncrypted, required this.hash, this.path});
 
@@ -14,6 +15,7 @@ class FileInfo {
     byteSize = json['byteSize'];
     isEncrypted = json['isEncrypted'];
     hash = json['hash'];
+    subDirectory = json['subDirectory'];
   }
 
   Map<String, dynamic> toJson() {
@@ -22,6 +24,7 @@ class FileInfo {
     data['byteSize'] = byteSize;
     data['isEncrypted'] = isEncrypted;
     data['hash'] = hash;
+    data['subDirectory'] = subDirectory;
     return data;
   }
 
