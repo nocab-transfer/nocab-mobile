@@ -1,7 +1,7 @@
 name: nocab
 description: A file sharing app between your devices.
 
-publish_to: 'none'
+publish_to: 'none' 
 
 version: 1.0.0+1
 
