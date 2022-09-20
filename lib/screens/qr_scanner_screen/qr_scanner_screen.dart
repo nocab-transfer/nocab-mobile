@@ -18,11 +18,11 @@ class QrScanner extends StatelessWidget {
         onDetect: (barcode, args) {
           final String? code = barcode.rawValue;
           try {
-            var _deviceInfoRaw = utf8.decode(base64.decode(code!));
-            var _deviceInfo = DeviceInfo.fromJson(json.decode(_deviceInfoRaw));
-            Navigator.pop(context, _deviceInfo);
+            var deviceInfoRaw = utf8.decode(base64.decode(code!));
+            var deviceInfo = DeviceInfo.fromJson(json.decode(deviceInfoRaw));
+            Navigator.pop(context, deviceInfo);
           } catch (e) {
-            print("error $e" + code!);
+            print("error $e${code!}");
           }
         },
       ),

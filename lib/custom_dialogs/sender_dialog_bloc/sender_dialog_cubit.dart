@@ -39,30 +39,30 @@ class SenderDialogCubit extends Cubit<SenderDialogState> {
 
     Socket socket = await Socket.connect(serverDeviceInfo.ip, serverDeviceInfo.port!);
 
-    var _deviceInfo = await DeviceInfoPlugin().deviceInfo;
+    var deviceInfo = await DeviceInfoPlugin().deviceInfo;
 
     ShareRequest shareRequest = ShareRequest(
       deviceInfo: DeviceInfo(
-        name: (_deviceInfo is AndroidDeviceInfo)
-            ? _deviceInfo.model
-            : (_deviceInfo is IosDeviceInfo)
-                ? _deviceInfo.name
+        name: (deviceInfo is AndroidDeviceInfo)
+            ? deviceInfo.model
+            : (deviceInfo is IosDeviceInfo)
+                ? deviceInfo.name
                 : "Unknown",
         ip: (await Network.getCurrentNetworkInterface()).addresses.first.address,
         port: 5001,
-        opsystem: _deviceInfo is AndroidDeviceInfo
-            ? "Android " + _deviceInfo.version.release.toString()
-            : _deviceInfo is IosDeviceInfo
-                ? "IOS " + _deviceInfo.systemVersion.toString()
+        opsystem: deviceInfo is AndroidDeviceInfo
+            ? "Android ${deviceInfo.version.release}"
+            : deviceInfo is IosDeviceInfo
+                ? "IOS ${deviceInfo.systemVersion}"
                 : 'Unknown',
         uuid: "test",
       ),
       files: files,
       transferPort: await Network.getUnusedPort(),
-      uniqueId: _deviceInfo is AndroidDeviceInfo
-          ? _deviceInfo.androidId
-          : _deviceInfo is IosDeviceInfo
-              ? _deviceInfo.identifierForVendor
+      uniqueId: deviceInfo is AndroidDeviceInfo
+          ? deviceInfo.id
+          : deviceInfo is IosDeviceInfo
+              ? deviceInfo.identifierForVendor
               : 'Unknown',
     );
 

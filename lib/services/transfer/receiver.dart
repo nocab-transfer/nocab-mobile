@@ -6,10 +6,11 @@ import 'dart:typed_data';
 
 import 'package:nocab/models/deviceinfo_model.dart';
 import 'package:nocab/models/file_model.dart';
+import 'package:nocab/services/file_operations/file_operations.dart';
 
 import 'isolate_message.dart';
 
-class Sender {
+class Receiver {
   final DeviceInfo deviceInfo;
   final List<FileInfo> files;
   final int port;
@@ -26,7 +27,7 @@ class Sender {
   final Function(FileInfo file)? onFileEnd;
   final Function(DeviceInfo serverDeviceInfo, String message)? onError;
 
-  Sender({
+  Receiver({
     required this.files,
     required this.deviceInfo,
     required this.port,
@@ -36,7 +37,6 @@ class Sender {
     this.onFileEnd,
     this.onError,
   });
-
   Future<void> start() async {
     ReceivePort dataToMainPort = ReceivePort();
     await Isolate.spawn(_dataHandler, [
@@ -81,7 +81,7 @@ class Sender {
   }
 }
 
-Future<void> _dataHandler(List<dynamic> args) async {
+void _dataHandler(List<dynamic> args) async {
   SendPort dataToMainSendPort = args[0];
 
   ReceivePort mainToDataPort = ReceivePort();
@@ -95,9 +95,14 @@ Future<void> _dataHandler(List<dynamic> args) async {
 
   final int port = args[3];
 
+  Isolate? receiverIsolate;
+
   int totalByteCount = 0;
   int totalByteCountBefore = 0;
   const Duration duration = Duration(milliseconds: 100);
+
+  const int errorHandleTimeoutMilliseconds = 30000;
+  int currentErrorTime = 0;
 
   Timer.periodic(duration, (timer) {
     dataToMainSendPort.send(
@@ -111,21 +116,39 @@ Future<void> _dataHandler(List<dynamic> args) async {
         deviceInfo: deviceInfo,
       ),
     );
+
+    // if no data is send for 30 seconds, assume the transfer has crashed
+    if (totalByteCountBefore == totalByteCount) {
+      currentErrorTime = (currentErrorTime + (1000 / (1000 / duration.inMilliseconds))).toInt();
+    } else {
+      currentErrorTime = 0;
+    }
+
+    if (currentErrorTime > errorHandleTimeoutMilliseconds) {
+      timer.cancel();
+      dataToMainSendPort.send(DataReport(
+        DataReportType.error,
+        deviceInfo: deviceInfo,
+      ));
+      receiverIsolate?.kill();
+      Isolate.current.kill();
+    }
+
     totalByteCountBefore = totalByteCount;
   });
 
-  // Initialize sender isolate
+  // Initialize receiver isolate
 
-  ReceivePort senderToDataPort = ReceivePort();
+  ReceivePort receiverToDataPort = ReceivePort();
 
-  Isolate senderIsolate = await Isolate.spawn(_sender, [
-    senderToDataPort.sendPort,
+  receiverIsolate = await Isolate.spawn(_receiver, [
+    receiverToDataPort.sendPort,
     files,
     deviceInfo,
     port,
   ]);
 
-  senderToDataPort.listen((message) {
+  receiverToDataPort.listen((message) {
     switch ((message).type) {
       case ConnectionActionType.start:
         totalByteCountBefore = 0;
@@ -147,6 +170,7 @@ Future<void> _dataHandler(List<dynamic> args) async {
         currentFile = message.currentFile!;
         break;
       case ConnectionActionType.fileEnd:
+        filesTransferred.add(currentFile);
         dataToMainSendPort.send(
           DataReport(
             DataReportType.info,
@@ -158,79 +182,84 @@ Future<void> _dataHandler(List<dynamic> args) async {
             deviceInfo: deviceInfo,
           ),
         );
-        filesTransferred.add(currentFile);
         break;
       case ConnectionActionType.end:
         dataToMainSendPort.send(DataReport(DataReportType.end, deviceInfo: deviceInfo, files: files));
-        senderIsolate.kill();
+        receiverIsolate?.kill();
         Isolate.current.kill();
         break;
       case ConnectionActionType.error:
         dataToMainSendPort.send(DataReport(DataReportType.error, deviceInfo: deviceInfo));
-        senderIsolate.kill();
+        receiverIsolate?.kill();
         Isolate.current.kill();
         break;
     }
   });
 }
 
-void _sender(List<dynamic> args) async {
+void _receiver(List<dynamic> args) async {
   SendPort sendport = args[0];
   List<FileInfo> files = args[1];
-  DeviceInfo receiverDeviceInfo = args[2];
+  DeviceInfo senderDeviceInfo = args[2];
   int port = args[3];
 
-  RawServerSocket server = await RawServerSocket.bind(InternetAddress.anyIPv4, port);
-
-  Future<void> send(FileInfo fileInfo, RawSocket socket) async {
-    try {
-      final Uint8List buffer = Uint8List(1024 * 16);
-      RandomAccessFile file = await File(fileInfo.path!).open();
-
-      int bytesWritten = 0;
-      int totalWrite = 0;
-
-      int readBytesCountFromFile;
-      while ((readBytesCountFromFile = file.readIntoSync(buffer)) > 0) {
-        bytesWritten = socket.write(buffer.getRange(0, readBytesCountFromFile).toList());
-        totalWrite += bytesWritten;
-        file.setPositionSync(totalWrite);
-
-        sendport.send(ConnectionAction(
-          ConnectionActionType.event,
-          currentFile: fileInfo,
-          totalTransferredBytes: totalWrite,
-        ));
+  Future<void> receiveFile() async {
+    RawSocket? socket;
+    while (socket == null) {
+      try {
+        socket = await RawSocket.connect(senderDeviceInfo.ip, port);
+      } catch (e) {
+        print(e);
       }
-      sendport.send(ConnectionAction(ConnectionActionType.fileEnd, currentFile: fileInfo, totalTransferredBytes: totalWrite));
-
-      await Future.delayed(const Duration(seconds: 2));
-      files.remove(fileInfo);
-      socket.close();
-      if (files.isEmpty) sendport.send(ConnectionAction(ConnectionActionType.end));
-    } catch (e) {
-      socket.shutdown(SocketDirection.both);
-      print(e);
-      sendport.send(ConnectionAction(ConnectionActionType.error));
     }
-  }
 
-  server.listen((socket) {
-    if (socket.remoteAddress.address != receiverDeviceInfo.ip) socket.close();
+    int totalRead = 0;
 
+    File currentFile = File("${files.first.path!}.nocabtmp");
+    if (currentFile.existsSync()) currentFile.deleteSync();
+    await currentFile.create(recursive: true);
+
+    IOSink currentSink = currentFile.openWrite(mode: FileMode.append);
+
+    socket.write(utf8.encode(files.first.name));
+
+    sendport.send(ConnectionAction(ConnectionActionType.start, currentFile: files.first));
+
+    Uint8List? buffer;
     socket.listen((event) {
       switch (event) {
         case RawSocketEvent.read:
-          String data = utf8.decode(socket.read() ?? []); //String.fromCharCodes(socket.read() ?? []);
-          FileInfo file = files.firstWhere((element) => element.name == data);
-          sendport.send(ConnectionAction(ConnectionActionType.start, currentFile: file));
-          send(file, socket);
+          buffer = socket?.read();
+          if (buffer != null) {
+            currentSink.add(buffer!);
+            totalRead += buffer!.length;
+            sendport.send(ConnectionAction(
+              ConnectionActionType.event,
+              currentFile: files.first,
+              totalTransferredBytes: totalRead,
+            ));
+          }
+
+          if (totalRead == files.first.byteSize) {
+            socket?.close();
+            sendport.send(ConnectionAction(ConnectionActionType.fileEnd, currentFile: files.first, totalTransferredBytes: totalRead));
+
+            files.removeAt(0);
+            if (files.isNotEmpty) {
+              currentSink.close().then((value) => FileOperations.tmpToFile(currentFile));
+              receiveFile();
+            } else {
+              currentSink.close().then((value) {
+                return FileOperations.tmpToFile(currentFile).then((value) => sendport.send(ConnectionAction(ConnectionActionType.end)));
+              });
+            }
+          }
           break;
-        case RawSocketEvent.readClosed:
-        case RawSocketEvent.closed:
         default:
           break;
       }
     });
-  });
+  }
+
+  receiveFile();
 }

@@ -6,7 +6,7 @@ class FileList extends StatelessWidget {
   final List<FileInfo> files;
   final double height;
   final double width;
-  final Function()? onTap;
+  final Function(FileInfo file)? onTap;
 
   const FileList({super.key, required this.files, required this.height, required this.width, this.onTap});
 
@@ -22,7 +22,7 @@ class FileList extends StatelessWidget {
             color: Colors.transparent,
             child: InkWell(
               borderRadius: BorderRadius.circular(10),
-              onTap: onTap,
+              onTap: () => onTap?.call(files[index]),
               child: SizedBox(
                 height: 66,
                 child: Row(

@@ -1,4 +1,5 @@
 import 'package:animations/animations.dart';
+import 'package:nocab/custom_dialogs/receiver_dialog_bloc/receiver_dialog.dart';
 import 'package:nocab/custom_dialogs/sender_dialog_bloc/sender_dialog.dart';
 import 'package:nocab/custom_widgets/svh_color_handler/svg_color_handler.dart';
 import 'package:nocab/provider/theme_provider.dart';
@@ -24,7 +25,7 @@ class MainScreen extends StatelessWidget {
                 children: [
                   Text(
                     "Good Morning!",
-                    style: Theme.of(context).textTheme.headline5!,
+                    style: Theme.of(context).textTheme.headlineSmall!,
                   ),
                   Material(
                     child: InkWell(
@@ -68,11 +69,9 @@ class MainScreen extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () => _receiveHandler(context),
                   style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(150, 50),
+                    foregroundColor: Theme.of(context).hoverColor, minimumSize: const Size(150, 50), backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
                     //padding: const EdgeInsets.symmetric(horizontal: 48.0, vertical: 16.0),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
-                    primary: Theme.of(context).colorScheme.surfaceVariant,
-                    onPrimary: Theme.of(context).hoverColor,
                   ),
                   child: Text(
                     "Receive",
@@ -104,6 +103,6 @@ class MainScreen extends StatelessWidget {
   }
 
   void _receiveHandler(BuildContext context) {
-    //showModal(context: context, configuration: const FadeScaleTransitionConfiguration(barrierDismissible: true), builder: ((context) => const ReceiverDialog()));
+    showModal(context: context, configuration: const FadeScaleTransitionConfiguration(barrierDismissible: true), builder: ((context) => const ReceiverDialog()));
   }
 }

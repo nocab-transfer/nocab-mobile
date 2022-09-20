@@ -34,7 +34,7 @@ class FileConfirmationView extends StatelessWidget {
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Text("Send files", style: Theme.of(context).textTheme.headline6),
+                    child: Text("Send files", style: Theme.of(context).textTheme.titleLarge),
                   ),
                   Material(color: Colors.transparent, child: CloseButton(onPressed: () => Navigator.pop(context))),
                 ],
@@ -48,7 +48,7 @@ class FileConfirmationView extends StatelessWidget {
                 ),
               ),
               Text(
-                "${files.length} files\nTotal size: " + (files.map((e) => e.byteSize).reduce((a, b) => a + b)).formatBytes(),
+                "${files.length} files\nTotal size: ${(files.map((e) => e.byteSize).reduce((a, b) => a + b)).formatBytes()}",
                 style: const TextStyle(fontSize: 12),
                 textAlign: TextAlign.center,
               ),
