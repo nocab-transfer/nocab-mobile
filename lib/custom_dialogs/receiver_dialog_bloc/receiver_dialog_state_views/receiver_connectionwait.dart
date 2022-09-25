@@ -1,6 +1,10 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:nocab/custom_widgets/svh_color_handler/svg_color_handler.dart';
 import 'package:nocab/models/deviceinfo_model.dart';
+import 'package:nocab/screens/qr_scanner_screen/qr_scanner_screen.dart';
 
 class ConnectionWaitView extends StatelessWidget {
   final DeviceInfo deviceInfo;
@@ -69,7 +73,30 @@ class ConnectionWaitView extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton(
-                    onPressed: () {}, // TODO: implement QR Scanner Screen
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => QrScanner(
+                          onScan: (rawData) {
+                            final String code = rawData;
+                            try {
+                              var sendQrInfo = utf8.decode(base64.decode(code)).split(':');
+                              var ip = sendQrInfo[0];
+                              var port = sendQrInfo[1];
+                              var verificationString = sendQrInfo[2];
+                              Socket.connect(ip, int.parse(port)).then((socket) async {
+                                socket.write(base64.encode(utf8.encode(json.encode({"verificationString": verificationString, "deviceInfo": deviceInfo.toJson()}))));
+                              });
+                              Navigator.pop(context);
+                            } catch (e) {
+                              print("error $e$code");
+                            }
+                          },
+                        ),
+                      ),
+                    ).then((qrResult) {
+                      if (qrResult is DeviceInfo) true; //_onAccepted(qrResult, files);
+                    }),
                     style: ElevatedButton.styleFrom(
                       fixedSize: const Size(100, 40),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),

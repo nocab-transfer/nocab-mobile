@@ -11,7 +11,6 @@ class TransferSuccessView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    files.addAll(List.generate(50, (index) => files.first));
     return Dialog(
       elevation: 0,
       clipBehavior: Clip.antiAlias,

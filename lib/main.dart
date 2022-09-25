@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
         create: (context) => ThemeProvider(),
         builder: (context, _) {
           return MaterialApp(
-            title: 'NoCab',
+            title: 'NoCab Mobile',
             debugShowCheckedModeBanner: false,
             home: const MainScreen(),
             themeMode: Provider.of<ThemeProvider>(context).themeMode,

@@ -2,14 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nocab/custom_dialogs/receiver_dialog_bloc/receiver_dialog_cubit.dart';
 import 'package:nocab/custom_dialogs/receiver_dialog_bloc/receiver_dialog_state.dart';
-import 'package:nocab/custom_dialogs/receiver_dialog_bloc/receiver_dialog_state_views/receiver_connecting.dart';
-
-import 'package:nocab/custom_dialogs/receiver_dialog_bloc/receiver_dialog_state_views/receiver_connectionwait.dart';
-import 'package:nocab/custom_dialogs/receiver_dialog_bloc/receiver_dialog_state_views/receiver_receiverinit.dart';
-import 'package:nocab/custom_dialogs/receiver_dialog_bloc/receiver_dialog_state_views/receiver_requestconfirmation.dart';
-import 'package:nocab/custom_dialogs/receiver_dialog_bloc/receiver_dialog_state_views/receiver_transferfailed.dart';
-import 'package:nocab/custom_dialogs/receiver_dialog_bloc/receiver_dialog_state_views/receiver_transferring.dart';
-import 'package:nocab/custom_dialogs/receiver_dialog_bloc/receiver_dialog_state_views/receiver_transfersuccess.dart';
+import 'package:nocab/custom_dialogs/receiver_dialog_bloc/receiver_dialog_state_views.dart';
 
 class ReceiverDialog extends StatelessWidget {
   const ReceiverDialog({Key? key}) : super(key: key);

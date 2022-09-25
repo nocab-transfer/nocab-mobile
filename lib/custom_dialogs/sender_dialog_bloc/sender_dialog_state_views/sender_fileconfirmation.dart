@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:nocab/custom_widgets/device_finder_bloc/device_finder.dart';
 import 'package:nocab/custom_widgets/file_list/file_list.dart';
@@ -69,7 +71,23 @@ class FileConfirmationView extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Center(
                   child: ElevatedButton(
-                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => QrScanner())).then((qrResult) {
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => QrScanner(
+                          onScan: (rawData) {
+                            final String code = rawData;
+                            try {
+                              var deviceInfoRaw = utf8.decode(base64.decode(code));
+                              var deviceInfo = DeviceInfo.fromJson(json.decode(deviceInfoRaw));
+                              Navigator.pop(context, deviceInfo);
+                            } catch (e) {
+                              print("error $e$code");
+                            }
+                          },
+                        ),
+                      ),
+                    ).then((qrResult) {
                       if (qrResult is DeviceInfo) _onAccepted(qrResult, files);
                     }),
                     style: ElevatedButton.styleFrom(
