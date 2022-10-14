@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 class QrScanner extends StatelessWidget {
-  Function(String rawData) onScan;
+  final Function(String rawData) onScan;
   QrScanner({Key? key, required this.onScan}) : super(key: key);
 
   final MobileScannerController cameraController = MobileScannerController();

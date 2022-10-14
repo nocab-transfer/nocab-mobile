@@ -48,7 +48,7 @@ class Sender {
 
     SendPort?
         mainToDataPort; // this will be used for pausing and resuming the transfer
-
+    mainToDataPort;
     dataToMainPort.listen((message) {
       if (message is SendPort) mainToDataPort = message;
 
@@ -74,7 +74,8 @@ class Sender {
             );
             break;
           case DataReportType.error:
-            onError?.call(message.deviceInfo!, "Crash");
+            onError?.call(
+                message.deviceInfo!, message.message ?? 'Unknown Error');
             break;
         }
       }
@@ -96,9 +97,14 @@ Future<void> _dataHandler(List<dynamic> args) async {
 
   final int port = args[3];
 
+  Isolate? senderIsolate;
+
   int totalByteCount = 0;
   int totalByteCountBefore = 0;
   const Duration duration = Duration(milliseconds: 100);
+
+  const int errorHandleTimeoutMilliseconds = 30000;
+  int currentErrorTime = 0;
 
   Timer.periodic(duration, (timer) {
     dataToMainSendPort.send(
@@ -118,6 +124,26 @@ Future<void> _dataHandler(List<dynamic> args) async {
         deviceInfo: deviceInfo,
       ),
     );
+
+    // if no data is send for 30 seconds, assume the transfer has crashed
+    if (totalByteCountBefore == totalByteCount) {
+      currentErrorTime =
+          (currentErrorTime + (1000 / (1000 / duration.inMilliseconds)))
+              .toInt();
+    } else {
+      currentErrorTime = 0;
+    }
+
+    if (currentErrorTime > errorHandleTimeoutMilliseconds) {
+      timer.cancel();
+      dataToMainSendPort.send(DataReport(
+        DataReportType.error,
+        message: 'Transfer timed out',
+      ));
+      senderIsolate?.kill();
+      Isolate.current.kill();
+    }
+
     totalByteCountBefore = totalByteCount;
   });
 
@@ -125,7 +151,7 @@ Future<void> _dataHandler(List<dynamic> args) async {
 
   ReceivePort senderToDataPort = ReceivePort();
 
-  Isolate senderIsolate = await Isolate.spawn(_sender, [
+  senderIsolate = await Isolate.spawn(_sender, [
     senderToDataPort.sendPort,
     files,
     deviceInfo,
@@ -176,13 +202,13 @@ Future<void> _dataHandler(List<dynamic> args) async {
       case ConnectionActionType.end:
         dataToMainSendPort.send(DataReport(DataReportType.end,
             deviceInfo: deviceInfo, files: files));
-        senderIsolate.kill();
+        senderIsolate?.kill();
         Isolate.current.kill();
         break;
       case ConnectionActionType.error:
         dataToMainSendPort
-            .send(DataReport(DataReportType.error, deviceInfo: deviceInfo));
-        senderIsolate.kill();
+            .send(DataReport(DataReportType.error, message: message.message));
+        senderIsolate?.kill();
         Isolate.current.kill();
         break;
     }
@@ -225,12 +251,13 @@ void _sender(List<dynamic> args) async {
       await Future.delayed(const Duration(seconds: 2));
       files.remove(fileInfo);
       socket.close();
-      if (files.isEmpty)
+      if (files.isEmpty) {
         sendport.send(ConnectionAction(ConnectionActionType.end));
+      }
     } catch (e) {
       socket.shutdown(SocketDirection.both);
-      print(e);
-      sendport.send(ConnectionAction(ConnectionActionType.error));
+      sendport.send(
+          ConnectionAction(ConnectionActionType.error, message: e.toString()));
     }
   }
 

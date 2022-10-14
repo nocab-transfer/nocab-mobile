@@ -90,7 +90,7 @@ class FileConfirmationView extends StatelessWidget {
                                   json.decode(deviceInfoRaw));
                               Navigator.pop(context, deviceInfo);
                             } catch (e) {
-                              print("error $e$code");
+                              // TODO: Show error
                             }
                           },
                         ),

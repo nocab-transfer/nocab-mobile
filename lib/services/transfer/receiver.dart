@@ -48,7 +48,7 @@ class Receiver {
 
     SendPort?
         mainToDataPort; // this will be used for pausing and resuming the transfer
-
+    mainToDataPort;
     dataToMainPort.listen((message) {
       if (message is SendPort) mainToDataPort = message;
 
@@ -74,7 +74,8 @@ class Receiver {
             );
             break;
           case DataReportType.error:
-            onError?.call(message.deviceInfo!, "Crash");
+            onError?.call(
+                message.deviceInfo!, message.message ?? 'Unknown Error');
             break;
         }
       }
@@ -137,7 +138,7 @@ void _dataHandler(List<dynamic> args) async {
       timer.cancel();
       dataToMainSendPort.send(DataReport(
         DataReportType.error,
-        deviceInfo: deviceInfo,
+        message: 'Transfer timed out',
       ));
       receiverIsolate?.kill();
       Isolate.current.kill();
@@ -206,7 +207,7 @@ void _dataHandler(List<dynamic> args) async {
         break;
       case ConnectionActionType.error:
         dataToMainSendPort
-            .send(DataReport(DataReportType.error, deviceInfo: deviceInfo));
+            .send(DataReport(DataReportType.error, message: message.message));
         receiverIsolate?.kill();
         Isolate.current.kill();
         break;
@@ -226,7 +227,7 @@ void _receiver(List<dynamic> args) async {
       try {
         socket = await RawSocket.connect(senderDeviceInfo.ip, port);
       } catch (e) {
-        print(e);
+        await Future.delayed(const Duration(milliseconds: 100));
       }
     }
 

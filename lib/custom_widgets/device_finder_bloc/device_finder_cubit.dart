@@ -57,8 +57,9 @@ class DeviceFinderCubit extends Cubit<DeviceFinderState> {
         timeout: const Duration(seconds: 1));
     Uint8List data = await socket.first.timeout(const Duration(seconds: 1));
     if (device.name ==
-        json.decode(utf8.decode(base64.decode(utf8.decode(data))))['name'])
+        json.decode(utf8.decode(base64.decode(utf8.decode(data))))['name']) {
       return true;
+    }
     return false;
   }
 }

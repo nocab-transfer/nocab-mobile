@@ -18,6 +18,7 @@ class DataReport {
   double? speed;
   double? progress;
   DeviceInfo? deviceInfo;
+  String? message;
 
   DataReport(
     this.type, {
@@ -27,6 +28,7 @@ class DataReport {
     this.filesTransferred,
     this.currentFile,
     this.deviceInfo,
+    this.message,
   });
 }
 
@@ -43,6 +45,8 @@ class ConnectionAction {
 
   FileInfo? currentFile;
   int? totalTransferredBytes;
+  String? message;
 
-  ConnectionAction(this.type, {this.currentFile, this.totalTransferredBytes});
+  ConnectionAction(this.type,
+      {this.currentFile, this.totalTransferredBytes, this.message});
 }

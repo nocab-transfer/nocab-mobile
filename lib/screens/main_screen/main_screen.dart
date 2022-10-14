@@ -4,6 +4,7 @@ import 'package:nocab/custom_dialogs/sender_dialog_bloc/sender_dialog.dart';
 import 'package:nocab/custom_widgets/svh_color_handler/svg_color_handler.dart';
 import 'package:nocab/provider/theme_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 class MainScreen extends StatelessWidget {
@@ -126,10 +127,14 @@ class MainScreen extends StatelessWidget {
   }
 
   void _receiveHandler(BuildContext context) {
-    showModal(
-        context: context,
-        configuration:
-            const FadeScaleTransitionConfiguration(barrierDismissible: true),
-        builder: ((context) => const ReceiverDialog()));
+    Permission.storage.request().then((value) {
+      if (value.isGranted) {
+        showModal(
+            context: context,
+            configuration: const FadeScaleTransitionConfiguration(
+                barrierDismissible: false),
+            builder: ((context) => const ReceiverDialog()));
+      }
+    });
   }
 }

@@ -80,8 +80,9 @@ class ReceiverDialogCubit extends Cubit<ReceiverDialogState> {
 
     // initialize files for start transfer
     var downloadDirectory = await FileOperations.getDownloadPath();
-    if (downloadDirectory == null)
+    if (downloadDirectory == null) {
       throw Exception("Download directory not found");
+    }
 
     request.files = request.files.map<FileInfo>((e) {
       e.path = FileOperations.findUnusedFilePath(

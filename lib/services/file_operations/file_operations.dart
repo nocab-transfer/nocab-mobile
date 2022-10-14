@@ -37,11 +37,12 @@ class FileOperations {
       } else {
         directory = Directory('/storage/emulated/0/Download');
         // Put file in global download folder, if for an unknown reason it didn't exist, we fallback
-        if (!await directory.exists())
+        if (!await directory.exists()) {
           directory = await getExternalStorageDirectory();
+        }
       }
     } catch (err) {
-      print("Cannot get download folder path");
+      // TODO: handle error
     }
     return directory?.path;
   }

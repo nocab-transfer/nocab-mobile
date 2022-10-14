@@ -112,14 +112,15 @@ class ConnectionWaitView extends StatelessWidget {
                               });
                               Navigator.pop(context);
                             } catch (e) {
-                              print("error $e$code");
+                              // TODO: Show error
                             }
                           },
                         ),
                       ),
                     ).then((qrResult) {
-                      if (qrResult is DeviceInfo)
+                      if (qrResult is DeviceInfo) {
                         true; //_onAccepted(qrResult, files);
+                      }
                     }),
                     style: ElevatedButton.styleFrom(
                       fixedSize: const Size(100, 40),
