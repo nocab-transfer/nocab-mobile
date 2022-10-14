@@ -35,12 +35,18 @@ class FileSelectCancelView extends StatelessWidget {
                     const SizedBox(height: 16),
                     Text(
                       "No File Selected",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onBackground),
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.onBackground),
                       textAlign: TextAlign.center,
                     ),
                   ],
                 ),
-                TextButton(onPressed: () => Navigator.of(context).pop(), child: Text("click to close", style: Theme.of(context).textTheme.bodySmall))
+                TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text("click to close",
+                        style: Theme.of(context).textTheme.bodySmall))
               ],
             ),
           )),

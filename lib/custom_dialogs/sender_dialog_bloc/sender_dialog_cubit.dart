@@ -24,7 +24,14 @@ class SenderDialogCubit extends Cubit<SenderDialogState> {
               emit(const FileCacheLoading());
             })
         .then((filePickerResult) {
-      return filePickerResult?.files.map((file) => FileInfo(name: file.name, byteSize: file.size, path: file.path, hash: "unused", isEncrypted: false)).toList();
+      return filePickerResult?.files
+          .map((file) => FileInfo(
+              name: file.name,
+              byteSize: file.size,
+              path: file.path,
+              hash: "unused",
+              isEncrypted: false))
+          .toList();
     });
 
     if (files == null) {
@@ -34,10 +41,13 @@ class SenderDialogCubit extends Cubit<SenderDialogState> {
     }
   }
 
-  Future<void> send({required DeviceInfo serverDeviceInfo, required List<FileInfo> files}) async {
+  Future<void> send(
+      {required DeviceInfo serverDeviceInfo,
+      required List<FileInfo> files}) async {
     emit(Connecting(serverDeviceInfo));
 
-    Socket socket = await Socket.connect(serverDeviceInfo.ip, serverDeviceInfo.port!);
+    Socket socket =
+        await Socket.connect(serverDeviceInfo.ip, serverDeviceInfo.port!);
 
     var deviceInfo = await DeviceInfoPlugin().deviceInfo;
 
@@ -48,7 +58,10 @@ class SenderDialogCubit extends Cubit<SenderDialogState> {
             : (deviceInfo is IosDeviceInfo)
                 ? deviceInfo.name
                 : "Unknown",
-        ip: (await Network.getCurrentNetworkInterface()).addresses.first.address,
+        ip: (await Network.getCurrentNetworkInterface())
+            .addresses
+            .first
+            .address,
         port: 5001,
         opsystem: deviceInfo is AndroidDeviceInfo
             ? "Android ${deviceInfo.version.release}"
@@ -66,11 +79,13 @@ class SenderDialogCubit extends Cubit<SenderDialogState> {
               : 'Unknown',
     );
 
-    socket.write(base64.encode(utf8.encode(json.encode(shareRequest.toJson()))));
+    socket
+        .write(base64.encode(utf8.encode(json.encode(shareRequest.toJson()))));
 
     emit(RequestSent(serverDeviceInfo));
 
-    var response = ShareResponse.fromJson(json.decode(utf8.decode(base64.decode(utf8.decode(await socket.first)))));
+    var response = ShareResponse.fromJson(json
+        .decode(utf8.decode(base64.decode(utf8.decode(await socket.first)))));
     socket.close();
     if (response.response == true) {
       emit(RequestAccepted(serverDeviceInfo));
@@ -87,9 +102,19 @@ class SenderDialogCubit extends Cubit<SenderDialogState> {
     }
   }
 
-  void _onDataReport(List<FileInfo> files, List<FileInfo> filesTransferred, FileInfo currentFile, double speed, double progress, DeviceInfo deviceInfo) => emit(Transferring(files, filesTransferred, currentFile, speed, progress, deviceInfo));
+  void _onDataReport(
+          List<FileInfo> files,
+          List<FileInfo> filesTransferred,
+          FileInfo currentFile,
+          double speed,
+          double progress,
+          DeviceInfo deviceInfo) =>
+      emit(Transferring(
+          files, filesTransferred, currentFile, speed, progress, deviceInfo));
 
-  void _onEnd(DeviceInfo deviceInfo, List<FileInfo> files) => emit(TransferSuccess(deviceInfo, files));
+  void _onEnd(DeviceInfo deviceInfo, List<FileInfo> files) =>
+      emit(TransferSuccess(deviceInfo, files));
 
-  void _onError(DeviceInfo deviceInfo, String message) => emit(TransferFailed(deviceInfo, message));
+  void _onError(DeviceInfo deviceInfo, String message) =>
+      emit(TransferFailed(deviceInfo, message));
 }

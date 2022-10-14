@@ -3,7 +3,8 @@ import 'package:nocab/models/deviceinfo_model.dart';
 
 class ConnectingView extends StatelessWidget {
   final DeviceInfo serverDeviceInfo;
-  const ConnectingView({Key? key, required this.serverDeviceInfo}) : super(key: key);
+  const ConnectingView({Key? key, required this.serverDeviceInfo})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -33,12 +34,18 @@ class ConnectingView extends StatelessWidget {
                 const SizedBox(height: 16),
                 Text(
                   "Trying to connect to ${serverDeviceInfo.name}...",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onBackground),
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onBackground),
                   textAlign: TextAlign.center,
                 ),
                 Text(
                   serverDeviceInfo.opsystem ?? "",
-                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.grey),
+                  style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w300,
+                      color: Colors.grey),
                   textAlign: TextAlign.center,
                 ),
               ],

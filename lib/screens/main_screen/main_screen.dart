@@ -30,7 +30,9 @@ class MainScreen extends StatelessWidget {
                   Material(
                     child: InkWell(
                       borderRadius: BorderRadius.circular(10),
-                      onTap: () => Provider.of<ThemeProvider>(context, listen: false).toogleTheme(),
+                      onTap: () =>
+                          Provider.of<ThemeProvider>(context, listen: false)
+                              .toogleTheme(),
                       child: const Padding(
                         padding: EdgeInsets.all(8.0),
                         child: Icon(Icons.settings_rounded, size: 24),
@@ -50,13 +52,19 @@ class MainScreen extends StatelessWidget {
                     alignment: Alignment.center,
                     child: SvgColorHandler(
                       svgPath: "assets/images/human.svg",
-                      colorSwitch: {const Color(0xFF7d5fff): Theme.of(context).colorScheme.primary},
+                      colorSwitch: {
+                        const Color(0xFF7d5fff):
+                            Theme.of(context).colorScheme.primary
+                      },
                       height: 300,
                     ),
                   ),
                   SvgColorHandler(
                     svgPath: "assets/images/paperplane.svg",
-                    colorSwitch: {const Color(0xFF7d5fff): Theme.of(context).colorScheme.primary},
+                    colorSwitch: {
+                      const Color(0xFF7d5fff):
+                          Theme.of(context).colorScheme.primary
+                    },
                     height: 50,
                   ),
                 ],
@@ -69,13 +77,20 @@ class MainScreen extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () => _receiveHandler(context),
                   style: ElevatedButton.styleFrom(
-                    foregroundColor: Theme.of(context).hoverColor, minimumSize: const Size(150, 50), backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+                    foregroundColor: Theme.of(context).hoverColor,
+                    minimumSize: const Size(150, 50),
+                    backgroundColor:
+                        Theme.of(context).colorScheme.surfaceVariant,
                     //padding: const EdgeInsets.symmetric(horizontal: 48.0, vertical: 16.0),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0)),
                   ),
                   child: Text(
                     "Receive",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant),
                   ),
                 ),
                 ElevatedButton(
@@ -83,11 +98,15 @@ class MainScreen extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size(150, 50),
                     //padding: const EdgeInsets.symmetric(horizontal: 48.0, vertical: 16.0),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0)),
                   ),
                   child: Text(
                     "Send",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onPrimary),
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.onPrimary),
                   ),
                 ),
               ],
@@ -99,10 +118,18 @@ class MainScreen extends StatelessWidget {
   }
 
   void _sendHandler(BuildContext context) {
-    showModal(context: context, configuration: const FadeScaleTransitionConfiguration(barrierDismissible: false), builder: ((context) => const SenderDialog()));
+    showModal(
+        context: context,
+        configuration:
+            const FadeScaleTransitionConfiguration(barrierDismissible: false),
+        builder: ((context) => const SenderDialog()));
   }
 
   void _receiveHandler(BuildContext context) {
-    showModal(context: context, configuration: const FadeScaleTransitionConfiguration(barrierDismissible: true), builder: ((context) => const ReceiverDialog()));
+    showModal(
+        context: context,
+        configuration:
+            const FadeScaleTransitionConfiguration(barrierDismissible: true),
+        builder: ((context) => const ReceiverDialog()));
   }
 }

@@ -13,7 +13,9 @@ class ReceiverDialog extends StatelessWidget {
       create: (context) => ReceiverDialogCubit()..startReceiver(),
       child: BlocConsumer<ReceiverDialogCubit, ReceiverDialogState>(
         listener: (context, state) {},
-        builder: (context, state) => WillPopScope(onWillPop: () async => state.canPop, child: buildWidget(context, state)),
+        builder: (context, state) => WillPopScope(
+            onWillPop: () async => state.canPop,
+            child: buildWidget(context, state)),
       ),
     );
   }
@@ -24,17 +26,26 @@ class ReceiverDialog extends StatelessWidget {
         return const ReceiverInitView();
       case ConnectionWait:
         return ConnectionWaitView(
-          onPop: () => context.read<ReceiverDialogCubit>().stopReceiver().then((value) => Navigator.pop(context)),
+          onPop: () => context
+              .read<ReceiverDialogCubit>()
+              .stopReceiver()
+              .then((value) => Navigator.pop(context)),
           deviceInfo: (state as ConnectionWait).deviceInfo,
         );
       case RequestConfirmation:
         return RequestConfirmationView(
           request: (state as RequestConfirmation).shareRequest,
-          onAccepted: () => context.read<ReceiverDialogCubit>().acceptRequest(state.shareRequest, state.socket),
-          onRejected: () => context.read<ReceiverDialogCubit>().rejectRequest(state.shareRequest, state.socket).then((value) => Navigator.pop(context)),
+          onAccepted: () => context
+              .read<ReceiverDialogCubit>()
+              .acceptRequest(state.shareRequest, state.socket),
+          onRejected: () => context
+              .read<ReceiverDialogCubit>()
+              .rejectRequest(state.shareRequest, state.socket)
+              .then((value) => Navigator.pop(context)),
         );
       case Connecting:
-        return ConnectingView(serverDeviceInfo: (state as Connecting).serverDeviceInfo);
+        return ConnectingView(
+            serverDeviceInfo: (state as Connecting).serverDeviceInfo);
       case Transferring:
         return TransferringView(
           serverDeviceInfo: (state as Transferring).serverDeviceInfo,
@@ -45,7 +56,9 @@ class ReceiverDialog extends StatelessWidget {
           speed: state.speed,
         );
       case TransferSuccess:
-        return TransferSuccessView(serverDeviceInfo: (state as TransferSuccess).serverDeviceInfo, files: state.files);
+        return TransferSuccessView(
+            serverDeviceInfo: (state as TransferSuccess).serverDeviceInfo,
+            files: state.files);
       case TransferFailed:
         return TransferFailedView(
           message: (state as TransferFailed).message,

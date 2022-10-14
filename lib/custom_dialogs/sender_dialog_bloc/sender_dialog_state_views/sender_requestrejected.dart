@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 class RequestRejectedView extends StatelessWidget {
   final String? message;
-  const RequestRejectedView({Key? key, required this.message}) : super(key: key);
+  const RequestRejectedView({Key? key, required this.message})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -33,23 +34,31 @@ class RequestRejectedView extends StatelessWidget {
                           colors: [Colors.orange, Colors.red],
                           tileMode: TileMode.mirror,
                         ).createShader(bounds),
-                        child: const Icon(Icons.close_rounded, size: 50, color: Colors.white),
+                        child: const Icon(Icons.close_rounded,
+                            size: 50, color: Colors.white),
                       ),
                       const SizedBox(height: 16),
                       Text(
                         "Request Rejected",
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onBackground),
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.onBackground),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 4),
                       Text(
                         message ?? "No message provided",
-                        style: const TextStyle(fontSize: 12, color: Colors.grey),
+                        style:
+                            const TextStyle(fontSize: 12, color: Colors.grey),
                         textAlign: TextAlign.center,
                       ),
                     ],
                   ),
-                  TextButton(onPressed: () => Navigator.of(context).pop(), child: Text("click to close", style: Theme.of(context).textTheme.bodySmall))
+                  TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: Text("click to close",
+                          style: Theme.of(context).textTheme.bodySmall))
                 ],
               ),
             )),

@@ -5,7 +5,9 @@ import 'package:nocab/models/file_model.dart';
 class TransferSuccessView extends StatelessWidget {
   final DeviceInfo serverDeviceInfo;
   final List<FileInfo> files;
-  const TransferSuccessView({Key? key, required this.serverDeviceInfo, required this.files}) : super(key: key);
+  const TransferSuccessView(
+      {Key? key, required this.serverDeviceInfo, required this.files})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -42,12 +44,18 @@ class TransferSuccessView extends StatelessWidget {
                       const SizedBox(height: 16),
                       Text(
                         "${files.length} file(s) sent successfully to ${serverDeviceInfo.name}",
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onBackground),
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.onBackground),
                         textAlign: TextAlign.center,
                       ),
                     ],
                   ),
-                  TextButton(onPressed: () => Navigator.of(context).pop(), child: Text("click to close", style: Theme.of(context).textTheme.bodySmall))
+                  TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: Text("click to close",
+                          style: Theme.of(context).textTheme.bodySmall))
                 ],
               ),
             )),

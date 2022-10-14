@@ -11,7 +11,9 @@ import 'package:nocab/screens/qr_scanner_screen/qr_scanner_screen.dart';
 class FileConfirmationView extends StatelessWidget {
   final List<FileInfo> files;
   final Function(DeviceInfo onAccepted, List<FileInfo> files) onAccepted;
-  const FileConfirmationView({Key? key, required this.files, required this.onAccepted}) : super(key: key);
+  const FileConfirmationView(
+      {Key? key, required this.files, required this.onAccepted})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -36,9 +38,13 @@ class FileConfirmationView extends StatelessWidget {
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Text("Send files", style: Theme.of(context).textTheme.titleLarge),
+                    child: Text("Send files",
+                        style: Theme.of(context).textTheme.titleLarge),
                   ),
-                  Material(color: Colors.transparent, child: CloseButton(onPressed: () => Navigator.pop(context))),
+                  Material(
+                      color: Colors.transparent,
+                      child:
+                          CloseButton(onPressed: () => Navigator.pop(context))),
                 ],
               ),
               Padding(
@@ -78,8 +84,10 @@ class FileConfirmationView extends StatelessWidget {
                           onScan: (rawData) {
                             final String code = rawData;
                             try {
-                              var deviceInfoRaw = utf8.decode(base64.decode(code));
-                              var deviceInfo = DeviceInfo.fromJson(json.decode(deviceInfoRaw));
+                              var deviceInfoRaw =
+                                  utf8.decode(base64.decode(code));
+                              var deviceInfo = DeviceInfo.fromJson(
+                                  json.decode(deviceInfoRaw));
                               Navigator.pop(context, deviceInfo);
                             } catch (e) {
                               print("error $e$code");
@@ -92,11 +100,15 @@ class FileConfirmationView extends StatelessWidget {
                     }),
                     style: ElevatedButton.styleFrom(
                       fixedSize: const Size(100, 40),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15.0)),
                     ),
                     child: Text(
                       "Scan Qr",
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onPrimary),
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.onPrimary),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -109,5 +121,6 @@ class FileConfirmationView extends StatelessWidget {
     );
   }
 
-  void _onAccepted(DeviceInfo deviceInfo, List<FileInfo> files) => onAccepted.call(deviceInfo, files);
+  void _onAccepted(DeviceInfo deviceInfo, List<FileInfo> files) =>
+      onAccepted.call(deviceInfo, files);
 }

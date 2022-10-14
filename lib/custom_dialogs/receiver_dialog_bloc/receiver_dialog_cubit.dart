@@ -20,7 +20,8 @@ class ReceiverDialogCubit extends Cubit<ReceiverDialogState> {
   Future<void> listenDevices(DeviceInfo deviceInfo) async {
     listenerSocket = await ServerSocket.bind(InternetAddress.anyIPv4, 62192);
     listenerSocket!.listen((socket) {
-      socket.write(base64.encode(utf8.encode(json.encode(deviceInfo.toJson()))));
+      socket
+          .write(base64.encode(utf8.encode(json.encode(deviceInfo.toJson()))));
     });
   }
 
@@ -50,8 +51,10 @@ class ReceiverDialogCubit extends Cubit<ReceiverDialogState> {
         (socket) {
           socket.listen((event) {
             try {
-              String socketData = utf8.decode(base64.decode(utf8.decode(event)));
-              ShareRequest request = ShareRequest.fromJson(json.decode(socketData));
+              String socketData =
+                  utf8.decode(base64.decode(utf8.decode(event)));
+              ShareRequest request =
+                  ShareRequest.fromJson(json.decode(socketData));
               //TODO: Database ban check
               //TODO: Fail2Ban
               stopReceiver();
@@ -62,7 +65,8 @@ class ReceiverDialogCubit extends Cubit<ReceiverDialogState> {
       );
     } on SocketException catch (e) {
       stopReceiver();
-      emit(TransferFailed(null, "Message: ${e.message}\nOs Message: ${e.osError?.message}\nError Code: ${e.osError?.errorCode}\nAdress: ${e.address?.address}:${e.port}"));
+      emit(TransferFailed(null,
+          "Message: ${e.message}\nOs Message: ${e.osError?.message}\nError Code: ${e.osError?.errorCode}\nAdress: ${e.address?.address}:${e.port}"));
     }
   }
 
@@ -76,15 +80,22 @@ class ReceiverDialogCubit extends Cubit<ReceiverDialogState> {
 
     // initialize files for start transfer
     var downloadDirectory = await FileOperations.getDownloadPath();
-    if (downloadDirectory == null) throw Exception("Download directory not found");
+    if (downloadDirectory == null)
+      throw Exception("Download directory not found");
 
     request.files = request.files.map<FileInfo>((e) {
-      e.path = FileOperations.findUnusedFilePath(fileName: e.name, downloadPath: (p.join(downloadDirectory, e.subDirectory ?? "").replaceAll(RegExp(r'[\\\/]'), Platform.pathSeparator))); // TODO: add custom download path
+      e.path = FileOperations.findUnusedFilePath(
+          fileName: e.name,
+          downloadPath: (p
+              .join(downloadDirectory, e.subDirectory ?? "")
+              .replaceAll(RegExp(r'[\\\/]'),
+                  Platform.pathSeparator))); // TODO: add custom download path
       return e;
     }).toList();
 
     ShareResponse shareResponse = ShareResponse(response: true);
-    socket.write(base64.encode(utf8.encode(json.encode(shareResponse.toJson()))));
+    socket
+        .write(base64.encode(utf8.encode(json.encode(shareResponse.toJson()))));
     socket.close();
 
     Receiver(
@@ -97,16 +108,29 @@ class ReceiverDialogCubit extends Cubit<ReceiverDialogState> {
     ).start();
   }
 
-  Future<void> rejectRequest(ShareRequest request, Socket socket, {String? message}) async {
-    ShareResponse shareResponse = ShareResponse(response: false, info: message ?? "User rejected request");
+  Future<void> rejectRequest(ShareRequest request, Socket socket,
+      {String? message}) async {
+    ShareResponse shareResponse = ShareResponse(
+        response: false, info: message ?? "User rejected request");
 
-    socket.write(base64.encode(utf8.encode(json.encode(shareResponse.toJson()))));
+    socket
+        .write(base64.encode(utf8.encode(json.encode(shareResponse.toJson()))));
     await socket.close();
   }
 
-  void _onDataReport(List<FileInfo> files, List<FileInfo> filesTransferred, FileInfo currentFile, double speed, double progress, DeviceInfo deviceInfo) => emit(Transferring(files, filesTransferred, currentFile, speed, progress, deviceInfo));
+  void _onDataReport(
+          List<FileInfo> files,
+          List<FileInfo> filesTransferred,
+          FileInfo currentFile,
+          double speed,
+          double progress,
+          DeviceInfo deviceInfo) =>
+      emit(Transferring(
+          files, filesTransferred, currentFile, speed, progress, deviceInfo));
 
-  void _onEnd(DeviceInfo deviceInfo, List<FileInfo> files) => emit(TransferSuccess(deviceInfo, files));
+  void _onEnd(DeviceInfo deviceInfo, List<FileInfo> files) =>
+      emit(TransferSuccess(deviceInfo, files));
 
-  void _onError(DeviceInfo deviceInfo, String message) => emit(TransferFailed(deviceInfo, message));
+  void _onError(DeviceInfo deviceInfo, String message) =>
+      emit(TransferFailed(deviceInfo, message));
 }

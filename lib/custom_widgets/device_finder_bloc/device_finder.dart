@@ -8,7 +8,8 @@ import 'package:nocab/models/deviceinfo_model.dart';
 class DeviceFinder extends StatefulWidget {
   final Function(DeviceInfo deviceInfo)? onPressed;
   final Function(List<DeviceInfo> deviceInfos)? onDeviceFound;
-  const DeviceFinder({Key? key, this.onPressed, this.onDeviceFound}) : super(key: key);
+  const DeviceFinder({Key? key, this.onPressed, this.onDeviceFound})
+      : super(key: key);
 
   @override
   State<DeviceFinder> createState() => _DeviceFinderState();

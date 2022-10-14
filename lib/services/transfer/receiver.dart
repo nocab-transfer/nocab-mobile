@@ -46,7 +46,8 @@ class Receiver {
       port,
     ]);
 
-    SendPort? mainToDataPort; // this will be used for pausing and resuming the transfer
+    SendPort?
+        mainToDataPort; // this will be used for pausing and resuming the transfer
 
     dataToMainPort.listen((message) {
       if (message is SendPort) mainToDataPort = message;
@@ -111,15 +112,23 @@ void _dataHandler(List<dynamic> args) async {
         files: files,
         filesTransferred: filesTransferred,
         currentFile: currentFile,
-        speed: ((totalByteCount - totalByteCountBefore) * 1000 / duration.inMilliseconds) / 1024 / 1024,
-        progress: (100 * totalByteCount / currentFile.byteSize) > 100 ? 100 : (100 * totalByteCount / currentFile.byteSize),
+        speed: ((totalByteCount - totalByteCountBefore) *
+                1000 /
+                duration.inMilliseconds) /
+            1024 /
+            1024,
+        progress: (100 * totalByteCount / currentFile.byteSize) > 100
+            ? 100
+            : (100 * totalByteCount / currentFile.byteSize),
         deviceInfo: deviceInfo,
       ),
     );
 
     // if no data is send for 30 seconds, assume the transfer has crashed
     if (totalByteCountBefore == totalByteCount) {
-      currentErrorTime = (currentErrorTime + (1000 / (1000 / duration.inMilliseconds))).toInt();
+      currentErrorTime =
+          (currentErrorTime + (1000 / (1000 / duration.inMilliseconds)))
+              .toInt();
     } else {
       currentErrorTime = 0;
     }
@@ -177,19 +186,27 @@ void _dataHandler(List<dynamic> args) async {
             files: files,
             filesTransferred: filesTransferred,
             currentFile: message.currentFile,
-            speed: ((totalByteCount - totalByteCountBefore) * 1000 / duration.inMilliseconds) / 1024 / 1024,
-            progress: (100 * totalByteCount / currentFile.byteSize) > 100 ? 100 : (100 * totalByteCount / currentFile.byteSize),
+            speed: ((totalByteCount - totalByteCountBefore) *
+                    1000 /
+                    duration.inMilliseconds) /
+                1024 /
+                1024,
+            progress: (100 * totalByteCount / currentFile.byteSize) > 100
+                ? 100
+                : (100 * totalByteCount / currentFile.byteSize),
             deviceInfo: deviceInfo,
           ),
         );
         break;
       case ConnectionActionType.end:
-        dataToMainSendPort.send(DataReport(DataReportType.end, deviceInfo: deviceInfo, files: files));
+        dataToMainSendPort.send(DataReport(DataReportType.end,
+            deviceInfo: deviceInfo, files: files));
         receiverIsolate?.kill();
         Isolate.current.kill();
         break;
       case ConnectionActionType.error:
-        dataToMainSendPort.send(DataReport(DataReportType.error, deviceInfo: deviceInfo));
+        dataToMainSendPort
+            .send(DataReport(DataReportType.error, deviceInfo: deviceInfo));
         receiverIsolate?.kill();
         Isolate.current.kill();
         break;
@@ -223,7 +240,8 @@ void _receiver(List<dynamic> args) async {
 
     socket.write(utf8.encode(files.first.name));
 
-    sendport.send(ConnectionAction(ConnectionActionType.start, currentFile: files.first));
+    sendport.send(
+        ConnectionAction(ConnectionActionType.start, currentFile: files.first));
 
     Uint8List? buffer;
     socket.listen((event) {
@@ -242,15 +260,19 @@ void _receiver(List<dynamic> args) async {
 
           if (totalRead == files.first.byteSize) {
             socket?.close();
-            sendport.send(ConnectionAction(ConnectionActionType.fileEnd, currentFile: files.first, totalTransferredBytes: totalRead));
+            sendport.send(ConnectionAction(ConnectionActionType.fileEnd,
+                currentFile: files.first, totalTransferredBytes: totalRead));
 
             files.removeAt(0);
             if (files.isNotEmpty) {
-              currentSink.close().then((value) => FileOperations.tmpToFile(currentFile));
+              currentSink
+                  .close()
+                  .then((value) => FileOperations.tmpToFile(currentFile));
               receiveFile();
             } else {
               currentSink.close().then((value) {
-                return FileOperations.tmpToFile(currentFile).then((value) => sendport.send(ConnectionAction(ConnectionActionType.end)));
+                return FileOperations.tmpToFile(currentFile).then((value) =>
+                    sendport.send(ConnectionAction(ConnectionActionType.end)));
               });
             }
           }

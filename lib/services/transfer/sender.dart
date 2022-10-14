@@ -46,7 +46,8 @@ class Sender {
       port,
     ]);
 
-    SendPort? mainToDataPort; // this will be used for pausing and resuming the transfer
+    SendPort?
+        mainToDataPort; // this will be used for pausing and resuming the transfer
 
     dataToMainPort.listen((message) {
       if (message is SendPort) mainToDataPort = message;
@@ -106,8 +107,14 @@ Future<void> _dataHandler(List<dynamic> args) async {
         files: files,
         filesTransferred: filesTransferred,
         currentFile: currentFile,
-        speed: ((totalByteCount - totalByteCountBefore) * 1000 / duration.inMilliseconds) / 1024 / 1024,
-        progress: (100 * totalByteCount / currentFile.byteSize) > 100 ? 100 : (100 * totalByteCount / currentFile.byteSize),
+        speed: ((totalByteCount - totalByteCountBefore) *
+                1000 /
+                duration.inMilliseconds) /
+            1024 /
+            1024,
+        progress: (100 * totalByteCount / currentFile.byteSize) > 100
+            ? 100
+            : (100 * totalByteCount / currentFile.byteSize),
         deviceInfo: deviceInfo,
       ),
     );
@@ -153,20 +160,28 @@ Future<void> _dataHandler(List<dynamic> args) async {
             files: files,
             filesTransferred: filesTransferred,
             currentFile: message.currentFile,
-            speed: ((totalByteCount - totalByteCountBefore) * 1000 / duration.inMilliseconds) / 1024 / 1024,
-            progress: (100 * totalByteCount / currentFile.byteSize) > 100 ? 100 : (100 * totalByteCount / currentFile.byteSize),
+            speed: ((totalByteCount - totalByteCountBefore) *
+                    1000 /
+                    duration.inMilliseconds) /
+                1024 /
+                1024,
+            progress: (100 * totalByteCount / currentFile.byteSize) > 100
+                ? 100
+                : (100 * totalByteCount / currentFile.byteSize),
             deviceInfo: deviceInfo,
           ),
         );
         filesTransferred.add(currentFile);
         break;
       case ConnectionActionType.end:
-        dataToMainSendPort.send(DataReport(DataReportType.end, deviceInfo: deviceInfo, files: files));
+        dataToMainSendPort.send(DataReport(DataReportType.end,
+            deviceInfo: deviceInfo, files: files));
         senderIsolate.kill();
         Isolate.current.kill();
         break;
       case ConnectionActionType.error:
-        dataToMainSendPort.send(DataReport(DataReportType.error, deviceInfo: deviceInfo));
+        dataToMainSendPort
+            .send(DataReport(DataReportType.error, deviceInfo: deviceInfo));
         senderIsolate.kill();
         Isolate.current.kill();
         break;
@@ -180,7 +195,8 @@ void _sender(List<dynamic> args) async {
   DeviceInfo receiverDeviceInfo = args[2];
   int port = args[3];
 
-  RawServerSocket server = await RawServerSocket.bind(InternetAddress.anyIPv4, port);
+  RawServerSocket server =
+      await RawServerSocket.bind(InternetAddress.anyIPv4, port);
 
   Future<void> send(FileInfo fileInfo, RawSocket socket) async {
     try {
@@ -192,7 +208,8 @@ void _sender(List<dynamic> args) async {
 
       int readBytesCountFromFile;
       while ((readBytesCountFromFile = file.readIntoSync(buffer)) > 0) {
-        bytesWritten = socket.write(buffer.getRange(0, readBytesCountFromFile).toList());
+        bytesWritten =
+            socket.write(buffer.getRange(0, readBytesCountFromFile).toList());
         totalWrite += bytesWritten;
         file.setPositionSync(totalWrite);
 
@@ -202,12 +219,14 @@ void _sender(List<dynamic> args) async {
           totalTransferredBytes: totalWrite,
         ));
       }
-      sendport.send(ConnectionAction(ConnectionActionType.fileEnd, currentFile: fileInfo, totalTransferredBytes: totalWrite));
+      sendport.send(ConnectionAction(ConnectionActionType.fileEnd,
+          currentFile: fileInfo, totalTransferredBytes: totalWrite));
 
       await Future.delayed(const Duration(seconds: 2));
       files.remove(fileInfo);
       socket.close();
-      if (files.isEmpty) sendport.send(ConnectionAction(ConnectionActionType.end));
+      if (files.isEmpty)
+        sendport.send(ConnectionAction(ConnectionActionType.end));
     } catch (e) {
       socket.shutdown(SocketDirection.both);
       print(e);
@@ -221,9 +240,11 @@ void _sender(List<dynamic> args) async {
     socket.listen((event) {
       switch (event) {
         case RawSocketEvent.read:
-          String data = utf8.decode(socket.read() ?? []); //String.fromCharCodes(socket.read() ?? []);
+          String data = utf8.decode(
+              socket.read() ?? []); //String.fromCharCodes(socket.read() ?? []);
           FileInfo file = files.firstWhere((element) => element.name == data);
-          sendport.send(ConnectionAction(ConnectionActionType.start, currentFile: file));
+          sendport.send(
+              ConnectionAction(ConnectionActionType.start, currentFile: file));
           send(file, socket);
           break;
         case RawSocketEvent.readClosed:
