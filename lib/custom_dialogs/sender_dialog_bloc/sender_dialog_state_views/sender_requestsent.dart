@@ -3,8 +3,7 @@ import 'package:nocab/models/deviceinfo_model.dart';
 
 class RequestSentView extends StatelessWidget {
   final DeviceInfo serverDeviceInfo;
-  const RequestSentView({Key? key, required this.serverDeviceInfo})
-      : super(key: key);
+  const RequestSentView({Key? key, required this.serverDeviceInfo}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -34,26 +33,17 @@ class RequestSentView extends StatelessWidget {
                 const SizedBox(height: 16),
                 Text(
                   "Request sent to ${serverDeviceInfo.name}.",
-                  style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey),
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.grey),
                   textAlign: TextAlign.center,
                 ),
                 Text(
                   "Waiting for response",
-                  style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onBackground),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onBackground),
                   textAlign: TextAlign.center,
                 ),
                 Text(
                   serverDeviceInfo.opsystem ?? "",
-                  style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w300,
-                      color: Colors.grey),
+                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.grey),
                   textAlign: TextAlign.center,
                 ),
               ],

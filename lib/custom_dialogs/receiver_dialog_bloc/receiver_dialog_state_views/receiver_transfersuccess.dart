@@ -7,9 +7,7 @@ import 'package:open_filex/open_filex.dart';
 class TransferSuccessView extends StatelessWidget {
   final DeviceInfo serverDeviceInfo;
   final List<FileInfo> files;
-  const TransferSuccessView(
-      {Key? key, required this.serverDeviceInfo, required this.files})
-      : super(key: key);
+  const TransferSuccessView({Key? key, required this.serverDeviceInfo, required this.files}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -61,12 +59,9 @@ class TransferSuccessView extends StatelessWidget {
                             padding: const EdgeInsets.all(8.0),
                             child: FileList(
                               files: files,
-                              height: files.length * 66 > 350
-                                  ? 350
-                                  : files.length * 66,
+                              height: files.length * 66 > 350 ? 350 : files.length * 66,
                               width: MediaQuery.of(context).size.width - 50,
-                              onTap: (FileInfo file) =>
-                                  OpenFilex.open(file.path),
+                              onTap: (FileInfo file) => OpenFilex.open(file.path),
                             ),
                           ),
                         ),
@@ -74,9 +69,7 @@ class TransferSuccessView extends StatelessWidget {
                     ],
                   ),
                   TextButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: Text("click to close",
-                          style: Theme.of(context).textTheme.bodySmall))
+                      onPressed: () => Navigator.of(context).pop(), child: Text("click to close", style: Theme.of(context).textTheme.bodySmall))
                 ],
               ),
             )),

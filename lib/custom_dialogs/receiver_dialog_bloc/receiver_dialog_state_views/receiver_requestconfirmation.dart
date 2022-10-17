@@ -6,12 +6,7 @@ class RequestConfirmationView extends StatelessWidget {
   final ShareRequest request;
   final Function()? onAccepted;
   final Function()? onRejected;
-  const RequestConfirmationView(
-      {Key? key,
-      required this.request,
-      required this.onAccepted,
-      required this.onRejected})
-      : super(key: key);
+  const RequestConfirmationView({Key? key, required this.request, required this.onAccepted, required this.onRejected}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,9 +16,7 @@ class RequestConfirmationView extends StatelessWidget {
       backgroundColor: Colors.transparent,
       insetPadding: const EdgeInsets.all(8),
       child: Container(
-        decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.background,
-            borderRadius: BorderRadius.circular(20)),
+        decoration: BoxDecoration(color: Theme.of(context).colorScheme.background, borderRadius: BorderRadius.circular(20)),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -49,8 +42,7 @@ class RequestConfirmationView extends StatelessWidget {
                   maxLines: 2,
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                      fontSize: 22, fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
               ),
               Padding(
@@ -60,16 +52,12 @@ class RequestConfirmationView extends StatelessWidget {
                   maxLines: 2,
                   textAlign: TextAlign.left,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      fontWeight: FontWeight.w600),
+                  style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontWeight: FontWeight.w600),
                 ),
               ),
               FileList(
                 files: request.files,
-                height: request.files.length * 66 > 350
-                    ? 350
-                    : request.files.length * 66,
+                height: request.files.length * 66 > 350 ? 350 : request.files.length * 66,
                 width: MediaQuery.of(context).size.width - 50,
               ),
               Padding(
@@ -82,18 +70,12 @@ class RequestConfirmationView extends StatelessWidget {
                       style: OutlinedButton.styleFrom(
                         foregroundColor: Theme.of(context).colorScheme.error,
                         fixedSize: const Size(120, 40),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15.0)),
-                        side: BorderSide(
-                            width: 2,
-                            color: Theme.of(context).colorScheme.error),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+                        side: BorderSide(width: 2, color: Theme.of(context).colorScheme.error),
                       ),
                       child: Text(
                         "Reject",
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.error),
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.error),
                       ),
                     ),
                     ElevatedButton(
@@ -101,15 +83,11 @@ class RequestConfirmationView extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size(120, 40),
                         //padding: const EdgeInsets.symmetric(horizontal: 48.0, vertical: 16.0),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15.0)),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
                       ),
                       child: Text(
                         "Accept",
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.onPrimary),
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onPrimary),
                       ),
                     ),
                   ],

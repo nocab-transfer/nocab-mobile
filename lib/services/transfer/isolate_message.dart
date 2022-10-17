@@ -47,6 +47,5 @@ class ConnectionAction {
   int? totalTransferredBytes;
   String? message;
 
-  ConnectionAction(this.type,
-      {this.currentFile, this.totalTransferredBytes, this.message});
+  ConnectionAction(this.type, {this.currentFile, this.totalTransferredBytes, this.message});
 }

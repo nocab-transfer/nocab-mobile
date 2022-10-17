@@ -3,8 +3,7 @@ import 'package:nocab/models/deviceinfo_model.dart';
 
 class RequestAcceptedView extends StatelessWidget {
   final DeviceInfo serverDeviceInfo;
-  const RequestAcceptedView({Key? key, required this.serverDeviceInfo})
-      : super(key: key);
+  const RequestAcceptedView({Key? key, required this.serverDeviceInfo}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -33,9 +32,7 @@ class RequestAcceptedView extends StatelessWidget {
                   ),
                   Padding(
                     padding: EdgeInsets.all(8.0),
-                    child: Text("Request accepted\nWaiting for write",
-                        style: TextStyle(fontSize: 16),
-                        textAlign: TextAlign.center),
+                    child: Text("Request accepted\nWaiting for write", style: TextStyle(fontSize: 16), textAlign: TextAlign.center),
                   ),
                   Padding(
                     padding: EdgeInsets.all(8.0),

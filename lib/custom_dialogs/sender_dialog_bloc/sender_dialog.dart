@@ -32,23 +32,16 @@ class SenderDialog extends StatelessWidget {
             case FileConfirmation:
               return FileConfirmationView(
                 files: (state as FileConfirmation).files,
-                onAccepted: (deviceInfo, files) => context
-                    .read<SenderDialogCubit>()
-                    .send(files: files, serverDeviceInfo: deviceInfo),
+                onAccepted: (deviceInfo, files) => context.read<SenderDialogCubit>().send(files: files, serverDeviceInfo: deviceInfo),
               );
             case Connecting:
-              return ConnectingView(
-                  serverDeviceInfo: (state as Connecting).serverDeviceInfo);
+              return ConnectingView(serverDeviceInfo: (state as Connecting).serverDeviceInfo);
             case RequestSent:
-              return RequestSentView(
-                  serverDeviceInfo: (state as RequestSent).serverDeviceInfo);
+              return RequestSentView(serverDeviceInfo: (state as RequestSent).serverDeviceInfo);
             case RequestAccepted:
-              return RequestAcceptedView(
-                  serverDeviceInfo:
-                      (state as RequestAccepted).serverDeviceInfo);
+              return RequestAcceptedView(serverDeviceInfo: (state as RequestAccepted).serverDeviceInfo);
             case RequestRejected:
-              return RequestRejectedView(
-                  message: (state as RequestRejected).message);
+              return RequestRejectedView(message: (state as RequestRejected).message);
             case Transferring:
               return TransferringView(
                 serverDeviceInfo: (state as Transferring).serverDeviceInfo,
@@ -59,12 +52,9 @@ class SenderDialog extends StatelessWidget {
                 progress: state.progress,
               );
             case TransferSuccess:
-              return TransferSuccessView(
-                  serverDeviceInfo: (state as TransferSuccess).serverDeviceInfo,
-                  files: state.files);
+              return TransferSuccessView(serverDeviceInfo: (state as TransferSuccess).serverDeviceInfo, files: state.files);
             case TransferFailed:
-              return TransferFailedView(
-                  message: (state as TransferFailed).message);
+              return TransferFailedView(message: (state as TransferFailed).message);
             default:
               Navigator.pop(context);
               return const SenderInitView();

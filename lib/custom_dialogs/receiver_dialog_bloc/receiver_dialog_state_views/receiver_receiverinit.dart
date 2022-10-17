@@ -29,10 +29,7 @@ class ReceiverInitView extends StatelessWidget {
               const SizedBox(height: 16),
               Text(
                 "Initializing...",
-                style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onBackground),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onBackground),
                 textAlign: TextAlign.center,
               ),
             ],

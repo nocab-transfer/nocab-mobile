@@ -8,12 +8,7 @@ class FileInfo {
   String? path; //local
   String? subDirectory;
 
-  FileInfo(
-      {required this.name,
-      required this.byteSize,
-      required this.isEncrypted,
-      required this.hash,
-      this.path});
+  FileInfo({required this.name, required this.byteSize, required this.isEncrypted, required this.hash, this.path});
 
   FileInfo.fromJson(Map<String, dynamic> json) {
     name = json['name'];
@@ -34,12 +29,7 @@ class FileInfo {
   }
 
   static FileInfo empty() {
-    return FileInfo(
-        name: "File",
-        byteSize: 1,
-        isEncrypted: false,
-        hash: "unused",
-        path: null);
+    return FileInfo(name: "File", byteSize: 1, isEncrypted: false, hash: "unused", path: null);
   }
 }
 
@@ -68,11 +58,7 @@ class ShareRequest {
   late int transferPort;
   late String? uniqueId;
 
-  ShareRequest(
-      {required this.files,
-      required this.deviceInfo,
-      required this.transferPort,
-      this.uniqueId});
+  ShareRequest({required this.files, required this.deviceInfo, required this.transferPort, this.uniqueId});
 
   ShareRequest.fromJson(Map<String, dynamic> json) {
     files = List<FileInfo>.from(json['files'].map((x) => FileInfo.fromJson(x)));

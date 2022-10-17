@@ -9,9 +9,7 @@ import 'package:nocab/screens/qr_scanner_screen/qr_scanner_screen.dart';
 class ConnectionWaitView extends StatelessWidget {
   final DeviceInfo deviceInfo;
   final Function()? onPop;
-  const ConnectionWaitView(
-      {Key? key, required this.deviceInfo, required this.onPop})
-      : super(key: key);
+  const ConnectionWaitView({Key? key, required this.deviceInfo, required this.onPop}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +21,7 @@ class ConnectionWaitView extends StatelessWidget {
       child: Container(
         height: 350,
         width: MediaQuery.of(context).size.width - 50,
-        decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.background,
-            borderRadius: BorderRadius.circular(20)),
+        decoration: BoxDecoration(color: Theme.of(context).colorScheme.background, borderRadius: BorderRadius.circular(20)),
         child: Stack(
           children: [
             Align(
@@ -54,12 +50,9 @@ class ConnectionWaitView extends StatelessWidget {
                     SvgColorHandler(
                       svgPath: "assets/images/airplane.svg",
                       colorSwitch: {
-                        const Color(0xFF6C63FF):
-                            Theme.of(context).colorScheme.primary,
-                        const Color(0xFF3f3d56):
-                            Theme.of(context).colorScheme.primaryContainer,
-                        const Color(0xFFe6e6e6):
-                            Theme.of(context).colorScheme.primaryContainer,
+                        const Color(0xFF6C63FF): Theme.of(context).colorScheme.primary,
+                        const Color(0xFF3f3d56): Theme.of(context).colorScheme.primaryContainer,
+                        const Color(0xFFe6e6e6): Theme.of(context).colorScheme.primaryContainer,
                       },
                       height: 70,
                     ),
@@ -68,25 +61,16 @@ class ConnectionWaitView extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text("Device shown as: ",
-                              style: Theme.of(context).textTheme.titleLarge),
+                          Text("Device shown as: ", style: Theme.of(context).textTheme.titleLarge),
                           Text(deviceInfo.name ?? "Unknown",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge
-                                  ?.copyWith(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .primary)),
+                              style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Theme.of(context).colorScheme.primary)),
                         ],
                       ),
                     ),
-                    Text("Find ${deviceInfo.name} on sender device",
-                        style: Theme.of(context).textTheme.labelMedium),
+                    Text("Find ${deviceInfo.name} on sender device", style: Theme.of(context).textTheme.labelMedium),
                   ],
                 ),
-                Text("Waiting for connection...",
-                    style: Theme.of(context).textTheme.labelLarge),
+                Text("Waiting for connection...", style: Theme.of(context).textTheme.labelLarge),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton(
@@ -97,18 +81,13 @@ class ConnectionWaitView extends StatelessWidget {
                           onScan: (rawData) {
                             final String code = rawData;
                             try {
-                              var sendQrInfo =
-                                  utf8.decode(base64.decode(code)).split(':');
+                              var sendQrInfo = utf8.decode(base64.decode(code)).split(':');
                               var ip = sendQrInfo[0];
                               var port = sendQrInfo[1];
                               var verificationString = sendQrInfo[2];
-                              Socket.connect(ip, int.parse(port))
-                                  .then((socket) async {
-                                socket.write(base64.encode(utf8.encode(json
-                                    .encode({
-                                  "verificationString": verificationString,
-                                  "deviceInfo": deviceInfo.toJson()
-                                }))));
+                              Socket.connect(ip, int.parse(port)).then((socket) async {
+                                socket.write(base64
+                                    .encode(utf8.encode(json.encode({"verificationString": verificationString, "deviceInfo": deviceInfo.toJson()}))));
                               });
                               Navigator.pop(context);
                             } catch (e) {
@@ -124,15 +103,11 @@ class ConnectionWaitView extends StatelessWidget {
                     }),
                     style: ElevatedButton.styleFrom(
                       fixedSize: const Size(100, 40),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15.0)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
                     ),
                     child: Text(
                       "Scan Qr",
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.onPrimary),
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onPrimary),
                       textAlign: TextAlign.center,
                     ),
                   ),

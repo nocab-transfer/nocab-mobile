@@ -8,12 +8,7 @@ class FileList extends StatelessWidget {
   final double width;
   final Function(FileInfo file)? onTap;
 
-  const FileList(
-      {super.key,
-      required this.files,
-      required this.height,
-      required this.width,
-      this.onTap});
+  const FileList({super.key, required this.files, required this.height, required this.width, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -42,22 +37,11 @@ class FileList extends StatelessWidget {
                             height: 50,
                             decoration: BoxDecoration(
                               color: Theme.of(context).colorScheme.primary,
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(10)),
+                              borderRadius: const BorderRadius.all(Radius.circular(10)),
                             ),
                             child: Center(
-                                child: Text(
-                                    files[index]
-                                        .name
-                                        .split('.')
-                                        .last
-                                        .toUpperCase(),
-                                    style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold))),
+                                child: Text(files[index].name.split('.').last.toUpperCase(),
+                                    style: TextStyle(color: Theme.of(context).colorScheme.onPrimary, fontSize: 18, fontWeight: FontWeight.bold))),
                           ),
                         ),
                         SizedBox(
@@ -69,12 +53,10 @@ class FileList extends StatelessWidget {
                               Text(
                                 files[index].name,
                                 maxLines: 2,
-                                style: const TextStyle(
-                                    fontSize: 14, fontWeight: FontWeight.bold),
+                                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                                 overflow: TextOverflow.ellipsis,
                               ),
-                              Text(files[index].byteSize.formatBytes(),
-                                  style: const TextStyle(fontSize: 12)),
+                              Text(files[index].byteSize.formatBytes(), style: const TextStyle(fontSize: 12)),
                             ],
                           ),
                         ),

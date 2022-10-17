@@ -16,9 +16,7 @@ class Network {
 
     List<NetworkInterface> interfaces = await NetworkInterface.list();
 
-    return interfaces.firstWhere(
-        (element) => defaultInterfaceNames.contains(element.name),
-        orElse: () => interfaces.first);
+    return interfaces.firstWhere((element) => defaultInterfaceNames.contains(element.name), orElse: () => interfaces.first);
   }
 
   static Future<int> getUnusedPort() {

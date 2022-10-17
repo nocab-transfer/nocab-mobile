@@ -29,10 +29,7 @@ class FileCacheLoadingView extends StatelessWidget {
               const SizedBox(height: 16),
               Text(
                 "Files are being loaded...\nPlease wait",
-                style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onBackground),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onBackground),
                 textAlign: TextAlign.center,
               ),
             ],
