@@ -1,4 +1,4 @@
-package com.berkekbgz.nocab_mobile
+package com.berkekbgz.nocab
 
 import io.flutter.embedding.android.FlutterActivity
 
