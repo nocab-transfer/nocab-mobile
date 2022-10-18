@@ -104,6 +104,7 @@ class ConnectionWaitView extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       fixedSize: const Size(100, 40),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+                      backgroundColor: Theme.of(context).colorScheme.primary,
                     ),
                     child: Text(
                       "Scan Qr",

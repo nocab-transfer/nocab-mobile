@@ -84,6 +84,7 @@ class RequestConfirmationView extends StatelessWidget {
                         minimumSize: const Size(120, 40),
                         //padding: const EdgeInsets.symmetric(horizontal: 48.0, vertical: 16.0),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+                        backgroundColor: Theme.of(context).colorScheme.primary,
                       ),
                       child: Text(
                         "Accept",

@@ -72,7 +72,7 @@ class MainScreen extends StatelessWidget {
                                           children: [
                                             Text(
                                               (snapshot.data!["tag_name"].length > 9 ? "Update" : snapshot.data!["tag_name"]) + "\navailable",
-                                              style: Theme.of(context).textTheme.bodySmall,
+                                              style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 10),
                                               textAlign: TextAlign.center,
                                             ),
                                             Icon(Icons.download_rounded, size: 24, color: Theme.of(context).colorScheme.error),
@@ -150,6 +150,7 @@ class MainScreen extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       fixedSize: const Size(150, 50),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+                      backgroundColor: Theme.of(context).colorScheme.primary,
                     ),
                     child: Text(
                       "Send",
