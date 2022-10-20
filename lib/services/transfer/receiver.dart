@@ -267,10 +267,11 @@ void _receiver(List<dynamic> args) async {
           }
           break;
         case RawSocketEvent.closed:
-          sendport.send(ConnectionAction(ConnectionActionType.error, message: 'Socket closed'));
-          break;
         case RawSocketEvent.readClosed:
-          sendport.send(ConnectionAction(ConnectionActionType.error, message: 'Socket read closed'));
+          // copying file tmp to final destination may take some time, socket can close before that
+          // so checking if files transferred already and waiting for copying to finish
+          // if socket closed and files not transferred, send error
+          if (files.isNotEmpty) sendport.send(ConnectionAction(ConnectionActionType.error, message: 'Connection closed'));
           break;
         default:
           break;
