@@ -15,120 +15,87 @@ class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('NoCab Mobile', style: Theme.of(context).textTheme.headlineSmall!),
+        actions: [
+          FutureBuilder(
+            future: Github().checkForUpdates(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Material(
+                  color: Colors.transparent,
+                  child: OutlinedButton.icon(
+                    onPressed: () => launchUrlString(snapshot.data!["html_url"], mode: LaunchMode.externalNonBrowserApplication),
+                    icon: const Icon(Icons.download_rounded),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Theme.of(context).colorScheme.error,
+                      side: BorderSide(
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                    ),
+                    label: Text(
+                      '${snapshot.data!["tag_name"].length > 9 ? "Update" : snapshot.data!["tag_name"]}\nAvailable',
+                      textAlign: TextAlign.center,
+                      textScaleFactor: 0.7,
+                    ),
+                  ),
+                );
+              } else {
+                return const SizedBox();
+              }
+            },
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Material(
+              child: InkWell(
+                borderRadius: BorderRadius.circular(10),
+                onTap: () => Provider.of<ThemeProvider>(context, listen: false).toogleTheme(),
+                child: const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Icon(Icons.settings_rounded),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const SizedBox(),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Good Morning!",
-                    style: Theme.of(context).textTheme.headlineSmall!,
-                  ),
-                  Row(
-                    children: [
-                      FutureBuilder(
-                        future: Github().checkForUpdates(),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            return Material(
-                              color: Colors.transparent,
-                              child: InkWell(
-                                borderRadius: BorderRadius.circular(10),
-                                onTap: () => launchUrlString(snapshot.data!["html_url"], mode: LaunchMode.externalNonBrowserApplication),
-                                child: Container(
-                                  height: 40,
-                                  width: 90,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(color: Theme.of(context).colorScheme.error),
-                                  ),
-                                  child: Stack(
-                                    fit: StackFit.expand,
-                                    children: [
-                                      Align(
-                                        alignment: Alignment.topRight,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(4.0),
-                                          child: Container(
-                                            width: 5,
-                                            height: 5,
-                                            decoration: BoxDecoration(
-                                              color: Theme.of(context).colorScheme.error,
-                                              shape: BoxShape.circle,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              (snapshot.data!["tag_name"].length > 9 ? "Update" : snapshot.data!["tag_name"]) + "\navailable",
-                                              style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 10),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                            Icon(Icons.download_rounded, size: 24, color: Theme.of(context).colorScheme.error),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            );
-                          } else {
-                            return const SizedBox();
-                          }
-                        },
-                      ),
-                      const SizedBox(width: 8),
-                      Material(
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(10),
-                          onTap: () => Provider.of<ThemeProvider>(context, listen: false).toogleTheme(),
-                          child: const Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Icon(Icons.settings_rounded),
-                          ),
-                        ),
-                      ),
-                    ],
-                  )
-                ],
+            ConstrainedBox(
+              constraints: const BoxConstraints(
+                minHeight: 300,
+                maxHeight: 500,
               ),
-            ),
-            Container(
-              height: 500,
-              width: MediaQuery.of(context).size.width,
-              padding: const EdgeInsets.all(32),
               child: Stack(
                 children: [
                   Align(
-                    alignment: Alignment.center,
+                    alignment: Alignment.bottomCenter,
                     child: SvgColorHandler(
                       svgPath: "assets/images/human.svg",
                       colorSwitch: {const Color(0xFF7d5fff): Theme.of(context).colorScheme.primary},
                       height: 300,
                     ),
                   ),
-                  SvgColorHandler(
-                    svgPath: "assets/images/paperplane.svg",
-                    colorSwitch: {const Color(0xFF7d5fff): Theme.of(context).colorScheme.primary},
-                    height: 50,
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.all(32.0),
+                      child: SvgColorHandler(
+                        svgPath: "assets/images/paperplane.svg",
+                        colorSwitch: {const Color(0xFF7d5fff): Theme.of(context).colorScheme.primary},
+                        height: 50,
+                      ),
+                    ),
                   ),
                 ],
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
