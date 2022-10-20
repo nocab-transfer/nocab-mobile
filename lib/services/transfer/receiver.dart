@@ -128,6 +128,7 @@ void _dataHandler(List<dynamic> args) async {
       timer.cancel();
       dataToMainSendPort.send(DataReport(
         DataReportType.error,
+        deviceInfo: deviceInfo,
         message: 'Transfer timed out',
       ));
       receiverIsolate?.kill();
@@ -189,7 +190,7 @@ void _dataHandler(List<dynamic> args) async {
         Isolate.current.kill();
         break;
       case ConnectionActionType.error:
-        dataToMainSendPort.send(DataReport(DataReportType.error, message: message.message));
+        dataToMainSendPort.send(DataReport(DataReportType.error, message: message.message, deviceInfo: deviceInfo));
         receiverIsolate?.kill();
         Isolate.current.kill();
         break;
