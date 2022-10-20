@@ -1,12 +1,12 @@
 import 'dart:io';
 
+import 'package:nocab/models/file_model.dart';
 import 'package:path_provider/path_provider.dart';
 
 class FileOperations {
-  static Future<void> tmpToFile(File thisFile) async {
-    var lastSeparatorIndex = thisFile.path.lastIndexOf(Platform.pathSeparator);
-    await thisFile
-        .rename(thisFile.path.substring(0, lastSeparatorIndex + 1) + thisFile.path.substring(lastSeparatorIndex + 1).replaceFirst('.nocabtmp', ''));
+  static Future<void> tmpToFile(File thisFile, FileInfo toFile) async {
+    await thisFile.copy(toFile.path!);
+    await thisFile.delete();
   }
 
   static String findUnusedFilePath({required String fileName, required String downloadPath}) {

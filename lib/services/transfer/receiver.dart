@@ -7,6 +7,7 @@ import 'dart:typed_data';
 import 'package:nocab/models/deviceinfo_model.dart';
 import 'package:nocab/models/file_model.dart';
 import 'package:nocab/services/file_operations/file_operations.dart';
+import 'package:path/path.dart';
 
 import 'isolate_message.dart';
 
@@ -203,6 +204,7 @@ void _receiver(List<dynamic> args) async {
   List<FileInfo> files = args[1];
   DeviceInfo senderDeviceInfo = args[2];
   int port = args[3];
+  Directory tempFolder = await Directory.systemTemp.createTemp();
 
   Future<void> receiveFile() async {
     RawSocket? socket;
@@ -216,15 +218,20 @@ void _receiver(List<dynamic> args) async {
 
     int totalRead = 0;
 
-    File currentFile = File("${files.first.path!}.nocabtmp");
-    if (currentFile.existsSync()) currentFile.deleteSync();
-    await currentFile.create(recursive: true);
+    FileInfo currentFile = files.first;
+    File tempFile = File(join(tempFolder.path, currentFile.name, ".nocabtmp"));
 
-    IOSink currentSink = currentFile.openWrite(mode: FileMode.append);
+    try {
+      await tempFile.create(recursive: true);
+    } catch (e) {
+      sendport.send(ConnectionAction(ConnectionActionType.error, message: 'Failed to create temp file'));
+    }
 
-    socket.write(utf8.encode(files.first.name));
+    IOSink currentSink = tempFile.openWrite(mode: FileMode.append);
 
-    sendport.send(ConnectionAction(ConnectionActionType.start, currentFile: files.first));
+    socket.write(utf8.encode(currentFile.name));
+
+    sendport.send(ConnectionAction(ConnectionActionType.start, currentFile: currentFile));
 
     Uint8List? buffer;
     socket.listen((event) {
@@ -236,25 +243,34 @@ void _receiver(List<dynamic> args) async {
             totalRead += buffer!.length;
             sendport.send(ConnectionAction(
               ConnectionActionType.event,
-              currentFile: files.first,
+              currentFile: currentFile,
               totalTransferredBytes: totalRead,
             ));
           }
 
-          if (totalRead == files.first.byteSize) {
+          if (totalRead == currentFile.byteSize) {
             socket?.close();
-            sendport.send(ConnectionAction(ConnectionActionType.fileEnd, currentFile: files.first, totalTransferredBytes: totalRead));
-
+            sendport.send(ConnectionAction(ConnectionActionType.fileEnd, currentFile: currentFile, totalTransferredBytes: totalRead));
             files.removeAt(0);
             if (files.isNotEmpty) {
-              currentSink.close().then((value) => FileOperations.tmpToFile(currentFile));
-              receiveFile();
+              currentSink.close().then((value) async {
+                await FileOperations.tmpToFile(tempFile, currentFile);
+                receiveFile();
+              });
             } else {
-              currentSink.close().then((value) {
-                return FileOperations.tmpToFile(currentFile).then((value) => sendport.send(ConnectionAction(ConnectionActionType.end)));
+              currentSink.close().then((value) async {
+                await FileOperations.tmpToFile(tempFile, currentFile);
+                await tempFolder.delete(recursive: true);
+                sendport.send(ConnectionAction(ConnectionActionType.end));
               });
             }
           }
+          break;
+        case RawSocketEvent.closed:
+          sendport.send(ConnectionAction(ConnectionActionType.error, message: 'Socket closed'));
+          break;
+        case RawSocketEvent.readClosed:
+          sendport.send(ConnectionAction(ConnectionActionType.error, message: 'Socket read closed'));
           break;
         default:
           break;
