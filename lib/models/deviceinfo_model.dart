@@ -3,16 +3,16 @@ class DeviceInfo {
   String? ip;
   int? port;
   String? opsystem;
-  String? uuid;
+  String? deviceId;
 
-  DeviceInfo({required this.name, required this.ip, required this.port, required this.opsystem, required this.uuid});
+  DeviceInfo({required this.name, required this.ip, required this.port, required this.opsystem, required this.deviceId});
 
   DeviceInfo.fromJson(Map<String, dynamic> json) {
     name = json['name'];
     ip = json['ip'];
     port = json['port'];
     opsystem = json['opsystem'];
-    uuid = json['uuid'];
+    deviceId = json['deviceId'];
   }
 
   Map<String, dynamic> toJson() {
@@ -21,7 +21,7 @@ class DeviceInfo {
     data['ip'] = ip;
     data['port'] = port;
     data['opsystem'] = opsystem;
-    data['uuid'] = uuid;
+    data['deviceId'] = deviceId;
     return data;
   }
 }

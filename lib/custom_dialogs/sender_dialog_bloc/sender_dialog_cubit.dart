@@ -57,15 +57,10 @@ class SenderDialogCubit extends Cubit<SenderDialogState> {
             : deviceInfo is IosDeviceInfo
                 ? "IOS ${deviceInfo.systemVersion}"
                 : 'Unknown',
-        uuid: "test",
+        deviceId: "test",
       ),
       files: files,
       transferPort: await Network.getUnusedPort(),
-      uniqueId: deviceInfo is AndroidDeviceInfo
-          ? deviceInfo.id
-          : deviceInfo is IosDeviceInfo
-              ? deviceInfo.identifierForVendor
-              : 'Unknown',
     );
 
     socket.write(base64.encode(utf8.encode(json.encode(shareRequest.toJson()))));

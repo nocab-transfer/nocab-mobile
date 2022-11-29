@@ -36,7 +36,7 @@ class ReceiverDialogCubit extends Cubit<ReceiverDialogState> {
       ip: (await Network.getCurrentNetworkInterface()).addresses.first.address,
       port: 5001,
       opsystem: Platform.operatingSystemVersion,
-      uuid: "test",
+      deviceId: "test",
     );
 
     try {

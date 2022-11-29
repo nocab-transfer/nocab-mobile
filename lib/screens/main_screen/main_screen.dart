@@ -2,11 +2,9 @@ import 'package:animations/animations.dart';
 import 'package:nocab/custom_dialogs/receiver_dialog_bloc/receiver_dialog.dart';
 import 'package:nocab/custom_dialogs/sender_dialog_bloc/sender_dialog.dart';
 import 'package:nocab/custom_widgets/svh_color_handler/svg_color_handler.dart';
-import 'package:nocab/provider/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:nocab/services/github/github.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class MainScreen extends StatelessWidget {
@@ -50,7 +48,13 @@ class MainScreen extends StatelessWidget {
             child: Material(
               child: InkWell(
                 borderRadius: BorderRadius.circular(10),
-                onTap: () => Provider.of<ThemeProvider>(context, listen: false).toogleTheme(),
+                onTap: () => null,
+                /*Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const Settings(),
+                  ),
+                ),*/
                 child: const Padding(
                   padding: EdgeInsets.all(8.0),
                   child: Icon(Icons.settings_rounded),
