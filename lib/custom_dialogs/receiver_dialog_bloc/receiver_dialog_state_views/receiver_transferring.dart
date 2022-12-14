@@ -71,14 +71,14 @@ class TransferringView extends StatelessWidget {
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text(serverDeviceInfo.name?.toUpperCase() ?? "Unknown",
+                                      Text(serverDeviceInfo.name.toUpperCase(),
                                           style: TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold,
                                             color: Theme.of(context).colorScheme.onSurfaceVariant,
                                           ),
                                           overflow: TextOverflow.ellipsis),
-                                      Text(serverDeviceInfo.ip ?? "Unknown",
+                                      Text(serverDeviceInfo.ip,
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.w200,

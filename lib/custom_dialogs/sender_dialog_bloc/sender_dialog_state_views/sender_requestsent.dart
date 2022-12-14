@@ -42,7 +42,7 @@ class RequestSentView extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
                 Text(
-                  serverDeviceInfo.opsystem ?? "",
+                  serverDeviceInfo.opsystem,
                   style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.grey),
                   textAlign: TextAlign.center,
                 ),

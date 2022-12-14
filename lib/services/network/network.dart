@@ -1,7 +1,7 @@
 import 'dart:io';
 
 class Network {
-  static Future<NetworkInterface> getCurrentNetworkInterface() async {
+  static Future<NetworkInterface> getCurrentNetworkInterface(List<NetworkInterface> networkInterfaces) async {
     List<String> defaultInterfaceNames = [
       'Wi-Fi',
       'Ethernet',
@@ -14,9 +14,10 @@ class Network {
       'wlan0',
     ];
 
-    List<NetworkInterface> interfaces = await NetworkInterface.list();
-
-    return interfaces.firstWhere((element) => defaultInterfaceNames.contains(element.name), orElse: () => interfaces.first);
+    return networkInterfaces.firstWhere(
+      (element) => defaultInterfaceNames.contains(element.name),
+      orElse: () => networkInterfaces.first, // return first if not any matched :(
+    );
   }
 
   static Future<int> getUnusedPort() {

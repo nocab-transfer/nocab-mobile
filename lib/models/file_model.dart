@@ -1,14 +1,36 @@
 import 'package:nocab/models/deviceinfo_model.dart';
 
+class ShareRequest {
+  late List<FileInfo> files;
+  late DeviceInfo deviceInfo;
+  late int transferPort;
+
+  ShareRequest({required this.files, required this.deviceInfo, required this.transferPort});
+
+  ShareRequest.fromJson(Map<String, dynamic> json) {
+    files = List<FileInfo>.from(json['files'].map((x) => FileInfo.fromJson(x)));
+    deviceInfo = DeviceInfo.fromJson(json['deviceInfo']);
+    transferPort = json['transferPort'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> map = <String, dynamic>{};
+    map['files'] = List<dynamic>.from(files.map((x) => x.toJson()));
+    map['deviceInfo'] = deviceInfo.toJson();
+    map['transferPort'] = transferPort;
+    return map;
+  }
+}
+
 class FileInfo {
   late String name;
   late int byteSize;
   late bool isEncrypted;
-  late String hash;
+  String? hash;
   String? path; //local
   String? subDirectory;
 
-  FileInfo({required this.name, required this.byteSize, required this.isEncrypted, required this.hash, this.path});
+  FileInfo({required this.name, required this.byteSize, required this.isEncrypted, this.hash, this.path, this.subDirectory});
 
   FileInfo.fromJson(Map<String, dynamic> json) {
     name = json['name'];
@@ -48,28 +70,6 @@ class ShareResponse {
     final Map<String, dynamic> map = <String, dynamic>{};
     map['response'] = response;
     map['info'] = info;
-    return map;
-  }
-}
-
-class ShareRequest {
-  late List<FileInfo> files;
-  late DeviceInfo deviceInfo;
-  late int transferPort;
-
-  ShareRequest({required this.files, required this.deviceInfo, required this.transferPort});
-
-  ShareRequest.fromJson(Map<String, dynamic> json) {
-    files = List<FileInfo>.from(json['files'].map((x) => FileInfo.fromJson(x)));
-    deviceInfo = DeviceInfo.fromJson(json['deviceInfo']);
-    transferPort = json['transferPort'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> map = <String, dynamic>{};
-    map['files'] = List<dynamic>.from(files.map((x) => x.toJson()));
-    map['deviceInfo'] = deviceInfo.toJson();
-    map['transferPort'] = transferPort;
     return map;
   }
 }

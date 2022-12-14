@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nocab/custom_dialogs/sender_dialog_bloc/sender_dialog_state.dart';
 import 'package:nocab/models/deviceinfo_model.dart';
 import 'package:nocab/models/file_model.dart';
 import 'package:nocab/services/network/network.dart';
+import 'package:nocab/services/settings/settings.dart';
 import 'package:nocab/services/transfer/sender.dart';
 
 class SenderDialogCubit extends Cubit<SenderDialogState> {
@@ -39,25 +39,15 @@ class SenderDialogCubit extends Cubit<SenderDialogState> {
   Future<void> send({required DeviceInfo serverDeviceInfo, required List<FileInfo> files}) async {
     emit(Connecting(serverDeviceInfo));
 
-    Socket socket = await Socket.connect(serverDeviceInfo.ip, serverDeviceInfo.port!);
-
-    var deviceInfo = await DeviceInfoPlugin().deviceInfo;
+    Socket socket = await Socket.connect(serverDeviceInfo.ip, serverDeviceInfo.port);
 
     ShareRequest shareRequest = ShareRequest(
       deviceInfo: DeviceInfo(
-        name: (deviceInfo is AndroidDeviceInfo)
-            ? deviceInfo.model
-            : (deviceInfo is IosDeviceInfo)
-                ? deviceInfo.name
-                : "Unknown",
-        ip: (await Network.getCurrentNetworkInterface()).addresses.first.address,
-        port: 5001,
-        opsystem: deviceInfo is AndroidDeviceInfo
-            ? "Android ${deviceInfo.version.release}"
-            : deviceInfo is IosDeviceInfo
-                ? "IOS ${deviceInfo.systemVersion}"
-                : 'Unknown',
-        deviceId: "test",
+        name: SettingsService().getSettings.deviceName,
+        ip: await SettingsService().getCurrentIp,
+        port: SettingsService().getSettings.mainPort,
+        opsystem: Platform.operatingSystem,
+        deviceId: "",
       ),
       files: files,
       transferPort: await Network.getUnusedPort(),

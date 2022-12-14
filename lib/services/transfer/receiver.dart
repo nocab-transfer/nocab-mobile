@@ -219,7 +219,7 @@ void _receiver(List<dynamic> args) async {
     int totalRead = 0;
 
     FileInfo currentFile = files.first;
-    File tempFile = File(join(tempFolder.path, currentFile.name, ".nocabtmp"));
+    File tempFile = File(join(tempFolder.path, "${currentFile.name}.nocabtmp"));
 
     try {
       await tempFile.create(recursive: true);
@@ -254,14 +254,22 @@ void _receiver(List<dynamic> args) async {
             files.removeAt(0);
             if (files.isNotEmpty) {
               currentSink.close().then((value) async {
-                await FileOperations.tmpToFile(tempFile, currentFile);
+                try {
+                  await FileOperations.tmpToFile(tempFile, currentFile);
+                } catch (e) {
+                  sendport.send(ConnectionAction(ConnectionActionType.error, message: 'Failed to move temp file\n$e'));
+                }
                 receiveFile();
               });
             } else {
               currentSink.close().then((value) async {
-                await FileOperations.tmpToFile(tempFile, currentFile);
-                await tempFolder.delete(recursive: true);
-                sendport.send(ConnectionAction(ConnectionActionType.end));
+                try {
+                  await FileOperations.tmpToFile(tempFile, currentFile);
+                  await tempFolder.delete(recursive: true);
+                  sendport.send(ConnectionAction(ConnectionActionType.end));
+                } catch (e) {
+                  sendport.send(ConnectionAction(ConnectionActionType.error, message: 'Failed to move temp file\n$e'));
+                }
               });
             }
           }

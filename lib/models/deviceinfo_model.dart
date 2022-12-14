@@ -1,9 +1,9 @@
 class DeviceInfo {
-  String? name;
-  String? ip;
-  int? port;
-  String? opsystem;
-  String? deviceId;
+  late String name;
+  late String ip;
+  late int port;
+  late String opsystem;
+  late String deviceId;
 
   DeviceInfo({required this.name, required this.ip, required this.port, required this.opsystem, required this.deviceId});
 

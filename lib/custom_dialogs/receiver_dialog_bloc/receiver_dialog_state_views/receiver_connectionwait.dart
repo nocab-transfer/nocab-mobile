@@ -62,8 +62,10 @@ class ConnectionWaitView extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text("Device shown as: ", style: Theme.of(context).textTheme.titleLarge),
-                          Text(deviceInfo.name ?? "Unknown",
-                              style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Theme.of(context).colorScheme.primary)),
+                          Text(
+                            deviceInfo.name,
+                            style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Theme.of(context).colorScheme.primary),
+                          ),
                         ],
                       ),
                     ),

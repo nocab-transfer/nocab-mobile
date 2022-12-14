@@ -80,7 +80,12 @@ class MainScreen extends StatelessWidget {
                     alignment: Alignment.bottomCenter,
                     child: SvgColorHandler(
                       svgPath: "assets/images/human.svg",
-                      colorSwitch: {const Color(0xFF7d5fff): Theme.of(context).colorScheme.primary},
+                      colorSwitch: {
+                        const Color(0xFF7d5fff): Theme.of(context).colorScheme.primary,
+                        const Color(0xFF2f2e41): Theme.of(context).colorScheme.secondaryContainer,
+                        const Color(0xFFe6e6e6): Theme.of(context).colorScheme.onPrimaryContainer,
+                        const Color(0xFF3F3D56): Theme.of(context).colorScheme.onPrimaryContainer,
+                      },
                       height: 300,
                     ),
                   ),

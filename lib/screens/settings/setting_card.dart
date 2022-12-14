@@ -7,8 +7,17 @@ class SettingCard extends StatelessWidget {
   final String? helpText;
   final IconData leading;
   final Function()? onTap;
-  const SettingCard({Key? key, required this.title, this.caption, required this.widget, this.helpText, required this.leading, this.onTap})
-      : super(key: key);
+  final bool dangerous;
+  const SettingCard({
+    Key? key,
+    required this.title,
+    this.caption,
+    required this.widget,
+    this.helpText,
+    required this.leading,
+    this.onTap,
+    this.dangerous = false,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,14 +38,23 @@ class SettingCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const SizedBox(width: 8),
-                  Icon(leading, color: Theme.of(context).colorScheme.onBackground, size: 24),
+                  Icon(
+                    leading,
+                    color: dangerous ? Theme.of(context).colorScheme.error : Theme.of(context).colorScheme.onBackground,
+                    size: 24,
+                  ),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(title, style: Theme.of(context).textTheme.titleMedium),
+                        Text(
+                          title,
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                color: dangerous ? Theme.of(context).colorScheme.error : Theme.of(context).colorScheme.onBackground,
+                              ),
+                        ),
                         Text(
                           caption ?? "",
                           style: Theme.of(context).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w100),

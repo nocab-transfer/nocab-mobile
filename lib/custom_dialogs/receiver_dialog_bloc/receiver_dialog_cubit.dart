@@ -1,13 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nocab/custom_dialogs/receiver_dialog_bloc/receiver_dialog_state.dart';
 import 'package:nocab/models/deviceinfo_model.dart';
 import 'package:nocab/models/file_model.dart';
 import 'package:nocab/services/file_operations/file_operations.dart';
-import 'package:nocab/services/network/network.dart';
+import 'package:nocab/services/settings/settings.dart';
 import 'package:nocab/services/transfer/receiver.dart';
 import 'package:path/path.dart' as p;
 
@@ -17,32 +16,26 @@ class ReceiverDialogCubit extends Cubit<ReceiverDialogState> {
   ServerSocket? listenerSocket;
   ServerSocket? serverSocket;
 
-  Future<void> listenDevices(DeviceInfo deviceInfo) async {
-    listenerSocket = await ServerSocket.bind(InternetAddress.anyIPv4, 62192);
+  Future<void> _listenDevices(DeviceInfo deviceInfo) async {
+    listenerSocket = await ServerSocket.bind(InternetAddress.anyIPv4, SettingsService().getSettings.finderPort);
     listenerSocket!.listen((socket) {
       socket.write(base64.encode(utf8.encode(json.encode(deviceInfo.toJson()))));
     });
   }
 
   Future<void> startReceiver() async {
-    var baseInfo = await DeviceInfoPlugin().deviceInfo;
-
     var clientDeviceInfo = DeviceInfo(
-      name: (baseInfo) is AndroidDeviceInfo
-          ? baseInfo.model
-          : baseInfo is IosDeviceInfo
-              ? baseInfo.name
-              : "Unknown",
-      ip: (await Network.getCurrentNetworkInterface()).addresses.first.address,
-      port: 5001,
+      name: SettingsService().getSettings.deviceName,
+      ip: await SettingsService().getCurrentIp,
+      port: SettingsService().getSettings.mainPort,
       opsystem: Platform.operatingSystemVersion,
-      deviceId: "test",
+      deviceId: "",
     );
 
     try {
-      await listenDevices(clientDeviceInfo);
+      await _listenDevices(clientDeviceInfo);
 
-      serverSocket = await ServerSocket.bind(InternetAddress.anyIPv4, 5001);
+      serverSocket = await ServerSocket.bind(InternetAddress.anyIPv4, SettingsService().getSettings.mainPort);
 
       emit(ConnectionWait(clientDeviceInfo));
 
@@ -83,10 +76,9 @@ class ReceiverDialogCubit extends Cubit<ReceiverDialogState> {
 
     request.files = request.files.map<FileInfo>((e) {
       e.path = FileOperations.findUnusedFilePath(
-          fileName: e.name,
-          downloadPath: (p
-              .join(downloadDirectory, e.subDirectory ?? "")
-              .replaceAll(RegExp(r'[\\\/]'), Platform.pathSeparator))); // TODO: add custom download path
+        fileName: e.name,
+        downloadPath: p.joinAll([downloadDirectory, ...p.split(e.subDirectory ?? "")]), // TODO: add custom download path
+      );
       return e;
     }).toList();
 

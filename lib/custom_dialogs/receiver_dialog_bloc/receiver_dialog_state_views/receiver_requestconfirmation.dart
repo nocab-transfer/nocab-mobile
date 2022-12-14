@@ -38,7 +38,7 @@ class RequestConfirmationView extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(top: 8.0),
                 child: Text(
-                  "${request.deviceInfo.name ?? "Unknown"}\nwants to send you a file",
+                  "${request.deviceInfo.name}\nwants to send you a file",
                   maxLines: 2,
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.ellipsis,

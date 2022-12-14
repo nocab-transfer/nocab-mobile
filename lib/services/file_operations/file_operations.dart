@@ -5,6 +5,7 @@ import 'package:path_provider/path_provider.dart';
 
 class FileOperations {
   static Future<void> tmpToFile(File thisFile, FileInfo toFile) async {
+    await Directory(File(toFile.path!).parent.path).create(recursive: true);
     await thisFile.copy(toFile.path!);
     await thisFile.delete();
   }
