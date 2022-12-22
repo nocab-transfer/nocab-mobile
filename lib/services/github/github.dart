@@ -17,7 +17,7 @@ class Github {
     if (data.statusCode == 200) {
       List jsonData = jsonDecode(data.body);
 
-      var latestRelease = includePrerelease
+      Map latestRelease = includePrerelease
           ? jsonData.first
           : jsonData.firstWhere(
               (element) => element["prerelease"] == false,
@@ -25,7 +25,7 @@ class Github {
             );
       String latestVersion = latestRelease["tag_name"];
       if (_isVersionGreaterThan(latestVersion.replaceAll('v', ''), version) || kDebugMode) {
-        return latestRelease;
+        return latestRelease..addAll(<String, String>{"current": version});
       }
     }
     return null;

@@ -1,4 +1,5 @@
 import 'package:animations/animations.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:nocab/custom_dialogs/receiver_dialog_bloc/receiver_dialog.dart';
 import 'package:nocab/custom_dialogs/sender_dialog_bloc/sender_dialog.dart';
 import 'package:nocab/custom_widgets/svh_color_handler/svg_color_handler.dart';
@@ -15,35 +16,8 @@ class MainScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('NoCab Mobile', style: Theme.of(context).textTheme.headlineSmall!),
+        title: Text('NoCab Mobile', style: Theme.of(context).textTheme.headlineSmall),
         actions: [
-          FutureBuilder(
-            future: Github().checkForUpdates(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return Material(
-                  color: Colors.transparent,
-                  child: OutlinedButton.icon(
-                    onPressed: () => launchUrlString(snapshot.data!["html_url"], mode: LaunchMode.externalNonBrowserApplication),
-                    icon: const Icon(Icons.download_rounded),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Theme.of(context).colorScheme.error,
-                      side: BorderSide(
-                        color: Theme.of(context).colorScheme.error,
-                      ),
-                    ),
-                    label: Text(
-                      '${snapshot.data!["tag_name"].length > 9 ? "Update" : snapshot.data!["tag_name"]}\nAvailable',
-                      textAlign: TextAlign.center,
-                      textScaleFactor: 0.7,
-                    ),
-                  ),
-                );
-              } else {
-                return const SizedBox();
-              }
-            },
-          ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Material(
@@ -69,11 +43,8 @@ class MainScreen extends StatelessWidget {
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            ConstrainedBox(
-              constraints: const BoxConstraints(
-                minHeight: 300,
-                maxHeight: 500,
-              ),
+            _buildUpdate(context),
+            Expanded(
               child: Stack(
                 children: [
                   Align(
@@ -86,7 +57,7 @@ class MainScreen extends StatelessWidget {
                         const Color(0xFFe6e6e6): Theme.of(context).colorScheme.onPrimaryContainer,
                         const Color(0xFF3F3D56): Theme.of(context).colorScheme.onPrimaryContainer,
                       },
-                      height: 300,
+                      height: MediaQuery.of(context).size.height * 0.4,
                     ),
                   ),
                   Align(
@@ -140,6 +111,69 @@ class MainScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildUpdate(BuildContext context) {
+    return FutureBuilder(
+        future: Github().checkForUpdates(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) return const SizedBox.shrink();
+          return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Theme.of(context).colorScheme.error),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.error,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: Icon(Icons.download_rounded, color: Theme.of(context).colorScheme.onError),
+                            ).animate(onComplete: (controller) => controller.repeat()).shakeX(amount: 2).then(delay: 3000.ms),
+                          ),
+                          const SizedBox(width: 8),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Update Available',
+                                style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
+                              ),
+                              Text.rich(
+                                TextSpan(text: snapshot.data!["current"], children: [
+                                  const TextSpan(text: ' > '),
+                                  TextSpan(text: snapshot.data!["tag_name"]),
+                                ]),
+                                style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontStyle: FontStyle.italic),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                      ElevatedButton(
+                        onPressed: () => launchUrlString(snapshot.data!["html_url"], mode: LaunchMode.externalNonBrowserApplication),
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Theme.of(context).colorScheme.onError,
+                          backgroundColor: Theme.of(context).colorScheme.error,
+                        ),
+                        child: const Text('Update'),
+                      ),
+                    ],
+                  ),
+                ),
+              ).animate().slideX(begin: -.05, curve: Curves.easeOut).fadeIn());
+        });
   }
 
   void _sendHandler(BuildContext context) {
