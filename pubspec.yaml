@@ -55,3 +55,7 @@ flutter:
     - assets/images/human.svg
     - assets/images/paperplane.svg
     - assets/images/airplane.svg
+  fonts:
+    - family: VarelaRound
+      fonts:
+        - asset: assets/fonts/VarelaRound-Regular.ttf

@@ -16,26 +16,29 @@ class MainScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('NoCab Mobile', style: Theme.of(context).textTheme.headlineSmall),
+        titleSpacing: 16,
+        title: Text(
+          'NoCab Mobile',
+          style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold, fontFamily: "VarelaRound"),
+        ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Material(
-              child: InkWell(
-                borderRadius: BorderRadius.circular(10),
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const Settings(),
-                  ),
-                ),
-                child: const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Icon(Icons.settings_rounded),
-                ),
-              ),
+          /*TextButton.icon(
+            onPressed: () {},
+            style: TextButton.styleFrom(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              foregroundColor: Theme.of(context).colorScheme.onBackground,
             ),
+            label: const Text('History'),
+            icon: const Icon(Icons.history_rounded),
+          ),*/
+          IconButton(
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const Settings())),
+            style: IconButton.styleFrom(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+            icon: const Icon(Icons.settings_rounded),
           ),
+          const SizedBox(width: 8),
         ],
       ),
       body: Center(

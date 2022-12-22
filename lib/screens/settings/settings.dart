@@ -33,47 +33,34 @@ class _SettingsState extends State<Settings> {
 
     return Scaffold(
         appBar: AppBar(
+          titleSpacing: 8,
+          scrolledUnderElevation: 0,
+          elevation: 0,
           title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.start,
             mainAxisSize: MainAxisSize.max,
             children: [
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  InkWell(
-                    onTap: () => Navigator.pop(context),
-                    borderRadius: BorderRadius.circular(10),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Icon(Icons.arrow_back_ios_rounded),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  const Text("Settings"),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: Material(
-                  color: Colors.transparent,
-                  child: OutlinedButton.icon(
-                    onPressed: () {}, // TODO: Add about
-                    icon: const Icon(Icons.question_mark_rounded, size: 16),
-                    label: const Text('About'),
-                  ),
+              IconButton(
+                onPressed: () => Navigator.pop(context),
+                style: IconButton.styleFrom(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
+                icon: const Icon(Icons.arrow_back_ios_rounded),
               ),
+              const SizedBox(width: 8),
+              const Text("Settings"),
             ],
           ),
           automaticallyImplyLeading: false,
           backgroundColor: Colors.transparent,
-          scrolledUnderElevation: 0,
-          elevation: 0,
+          actions: [
+            OutlinedButton.icon(
+              onPressed: () {}, // TODO: Add about
+              icon: const Icon(Icons.question_mark_rounded, size: 16),
+              label: const Text('About'),
+            ),
+            const SizedBox(width: 8),
+          ],
         ),
         body: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
