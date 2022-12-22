@@ -1,9 +1,11 @@
+import 'package:nocab/models/database/file_db.dart';
 import 'package:nocab/models/deviceinfo_model.dart';
 
 class ShareRequest {
   late List<FileInfo> files;
   late DeviceInfo deviceInfo;
   late int transferPort;
+  String? transferUuid; // local
 
   ShareRequest({required this.files, required this.deviceInfo, required this.transferPort});
 
@@ -52,6 +54,15 @@ class FileInfo {
 
   static FileInfo empty() {
     return FileInfo(name: "File", byteSize: 1, isEncrypted: false, hash: "unused", path: null);
+  }
+
+  FileDb toIsarDb() {
+    return FileDb()
+      ..name = name
+      ..byteSize = byteSize
+      ..isEncrypted = isEncrypted
+      ..hash = hash
+      ..path = path;
   }
 }
 

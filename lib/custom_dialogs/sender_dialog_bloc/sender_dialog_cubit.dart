@@ -8,7 +8,11 @@ import 'package:nocab/models/deviceinfo_model.dart';
 import 'package:nocab/models/file_model.dart';
 import 'package:nocab/services/network/network.dart';
 import 'package:nocab/services/settings/settings.dart';
+import 'package:nocab/services/transfer/report_models/data_report.dart';
+import 'package:nocab/services/transfer/report_models/end_report.dart';
+import 'package:nocab/services/transfer/report_models/error_report.dart';
 import 'package:nocab/services/transfer/sender.dart';
+import 'package:uuid/uuid.dart';
 
 class SenderDialogCubit extends Cubit<SenderDialogState> {
   SenderDialogCubit() : super(const SenderInit());
@@ -57,7 +61,7 @@ class SenderDialogCubit extends Cubit<SenderDialogState> {
       ),
       files: files,
       transferPort: await Network.getUnusedPort(),
-    );
+    )..transferUuid = const Uuid().v4();
 
     socket.write(base64.encode(utf8.encode(json.encode(shareRequest.toJson()))));
 
@@ -68,23 +72,31 @@ class SenderDialogCubit extends Cubit<SenderDialogState> {
     if (response.response == true) {
       emit(RequestAccepted(serverDeviceInfo));
       Sender(
-        port: shareRequest.transferPort,
         deviceInfo: serverDeviceInfo,
         files: files,
-        onDataReport: _onDataReport,
-        onEnd: _onEnd,
-        onError: _onError,
-      ).start();
+        transferPort: shareRequest.transferPort,
+        uniqueId: shareRequest.transferUuid!,
+      )
+        ..start()
+        ..onEvent.listen((event) {
+          switch (event.runtimeType) {
+            case DataReport:
+              event as DataReport;
+              emit(Transferring(event.files, event.filesTransferred, event.currentFile, event.speed, event.progress, event.deviceInfo));
+              break;
+            case EndReport:
+              event as EndReport;
+              emit(TransferSuccess(event.device, event.files));
+              break;
+            case ErrorReport:
+              event as ErrorReport;
+              emit(TransferFailed(event.device, event.message));
+              break;
+            default:
+          }
+        });
     } else {
       emit(RequestRejected(response.info ?? ""));
     }
   }
-
-  void _onDataReport(
-          List<FileInfo> files, List<FileInfo> filesTransferred, FileInfo currentFile, double speed, double progress, DeviceInfo deviceInfo) =>
-      emit(Transferring(files, filesTransferred, currentFile, speed, progress, deviceInfo));
-
-  void _onEnd(DeviceInfo deviceInfo, List<FileInfo> files) => emit(TransferSuccess(deviceInfo, files));
-
-  void _onError(DeviceInfo deviceInfo, String message) => emit(TransferFailed(deviceInfo, message));
 }

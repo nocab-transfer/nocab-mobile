@@ -8,7 +8,11 @@ import 'package:nocab/models/file_model.dart';
 import 'package:nocab/services/file_operations/file_operations.dart';
 import 'package:nocab/services/settings/settings.dart';
 import 'package:nocab/services/transfer/receiver.dart';
+import 'package:nocab/services/transfer/report_models/data_report.dart';
+import 'package:nocab/services/transfer/report_models/end_report.dart';
+import 'package:nocab/services/transfer/report_models/error_report.dart';
 import 'package:path/path.dart' as p;
+import 'package:uuid/uuid.dart';
 
 class ReceiverDialogCubit extends Cubit<ReceiverDialogState> {
   ReceiverDialogCubit() : super(const ReceiverInit());
@@ -48,6 +52,7 @@ class ReceiverDialogCubit extends Cubit<ReceiverDialogState> {
               //TODO: Database ban check
               //TODO: Fail2Ban
               stopReceiver();
+              request.transferUuid = const Uuid().v4();
               emit(RequestConfirmation(request, socket));
             } catch (_) {}
           });
@@ -87,13 +92,29 @@ class ReceiverDialogCubit extends Cubit<ReceiverDialogState> {
     socket.close();
 
     Receiver(
-      files: request.files,
       deviceInfo: request.deviceInfo,
-      port: request.transferPort,
-      onDataReport: _onDataReport,
-      onEnd: _onEnd,
-      onError: _onError,
-    ).start();
+      files: request.files,
+      transferPort: request.transferPort,
+      uniqueId: request.transferUuid!,
+    )
+      ..start()
+      ..onEvent.listen((event) {
+        switch (event.runtimeType) {
+          case DataReport:
+            event as DataReport;
+            emit(Transferring(event.files, event.filesTransferred, event.currentFile, event.speed, event.progress, event.deviceInfo));
+            break;
+          case EndReport:
+            event as EndReport;
+            emit(TransferSuccess(event.device, event.files));
+            break;
+          case ErrorReport:
+            event as ErrorReport;
+            emit(TransferFailed(event.device, event.message));
+            break;
+          default:
+        }
+      });
   }
 
   Future<void> rejectRequest(ShareRequest request, Socket socket, {String? message}) async {
@@ -102,12 +123,4 @@ class ReceiverDialogCubit extends Cubit<ReceiverDialogState> {
     socket.write(base64.encode(utf8.encode(json.encode(shareResponse.toJson()))));
     await socket.close();
   }
-
-  void _onDataReport(
-          List<FileInfo> files, List<FileInfo> filesTransferred, FileInfo currentFile, double speed, double progress, DeviceInfo deviceInfo) =>
-      emit(Transferring(files, filesTransferred, currentFile, speed, progress, deviceInfo));
-
-  void _onEnd(DeviceInfo deviceInfo, List<FileInfo> files) => emit(TransferSuccess(deviceInfo, files));
-
-  void _onError(DeviceInfo deviceInfo, String message) => emit(TransferFailed(deviceInfo, message));
 }

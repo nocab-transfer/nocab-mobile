@@ -7,44 +7,32 @@ import 'dart:typed_data';
 import 'package:nocab/models/deviceinfo_model.dart';
 import 'package:nocab/models/file_model.dart';
 import 'package:nocab/services/file_operations/file_operations.dart';
+import 'package:nocab/services/transfer/isolate_message.dart';
+import 'package:nocab/services/transfer/report_models/base_report.dart';
+import 'package:nocab/services/transfer/report_models/data_report.dart';
+import 'package:nocab/services/transfer/report_models/end_report.dart';
+import 'package:nocab/services/transfer/report_models/error_report.dart';
+import 'package:nocab/services/transfer/report_models/fileend_report.dart';
+import 'package:nocab/services/transfer/report_models/start_report.dart';
+import 'package:nocab/services/transfer/transfer.dart';
 import 'package:path/path.dart';
 
-import 'isolate_message.dart';
-
-class Receiver {
-  final DeviceInfo deviceInfo;
-  final List<FileInfo> files;
-  final int port;
-  final Function(
-    List<FileInfo> files,
-    List<FileInfo> filesTransferred,
-    FileInfo currentFile,
-    double speed,
-    double progress,
-    DeviceInfo deviceInfo,
-  )? onDataReport;
-  final Function(DeviceInfo serverDeviceInfo)? onStart;
-  final Function(DeviceInfo serverDeviceInfo, List<FileInfo> files)? onEnd;
-  final Function(FileInfo file)? onFileEnd;
-  final Function(DeviceInfo serverDeviceInfo, String message)? onError;
-
+class Receiver extends Transfer {
   Receiver({
-    required this.files,
-    required this.deviceInfo,
-    required this.port,
-    this.onDataReport,
-    this.onStart,
-    this.onEnd,
-    this.onFileEnd,
-    this.onError,
-  });
+    required DeviceInfo deviceInfo,
+    required List<FileInfo> files,
+    required int transferPort,
+    required String uniqueId,
+  }) : super(deviceInfo: deviceInfo, files: files, transferPort: transferPort, uniqueId: uniqueId);
+
+  @override
   Future<void> start() async {
     ReceivePort dataToMainPort = ReceivePort();
     await Isolate.spawn(_dataHandler, [
       dataToMainPort.sendPort,
       files,
       deviceInfo,
-      port,
+      transferPort,
     ]);
 
     SendPort? mainToDataPort; // this will be used for pausing and resuming the transfer
@@ -52,31 +40,11 @@ class Receiver {
     dataToMainPort.listen((message) {
       if (message is SendPort) mainToDataPort = message;
 
-      if (message is DataReport) {
-        switch (message.type) {
-          case DataReportType.start:
-            onStart?.call(message.deviceInfo!);
-            break;
-          case DataReportType.end:
-            onEnd?.call(message.deviceInfo!, message.files!);
-            break;
-          case DataReportType.fileEnd:
-            onFileEnd?.call(message.currentFile!);
-            break;
-          case DataReportType.info:
-            onDataReport?.call(
-              message.files!,
-              message.filesTransferred!,
-              message.currentFile!,
-              message.speed!,
-              message.progress!,
-              message.deviceInfo!,
-            );
-            break;
-          case DataReportType.error:
-            onError?.call(message.deviceInfo!, message.message ?? 'Unknown Error');
-            break;
-        }
+      if (message is Report) eventController.add(message..transferUuid = uniqueId);
+      if (message is ErrorReport || message is EndReport) {
+        ongoing = false;
+        dataToMainPort.close();
+        eventController.close();
       }
     });
   }
@@ -98,6 +66,8 @@ void _dataHandler(List<dynamic> args) async {
 
   Isolate? receiverIsolate;
 
+  dataToMainSendPort.send(StartReport(startTime: DateTime.now(), deviceInfo: deviceInfo, files: files));
+
   int totalByteCount = 0;
   int totalByteCountBefore = 0;
   const Duration duration = Duration(milliseconds: 100);
@@ -108,7 +78,6 @@ void _dataHandler(List<dynamic> args) async {
   Timer.periodic(duration, (timer) {
     dataToMainSendPort.send(
       DataReport(
-        DataReportType.info,
         files: files,
         filesTransferred: filesTransferred,
         currentFile: currentFile,
@@ -127,15 +96,10 @@ void _dataHandler(List<dynamic> args) async {
 
     if (currentErrorTime > errorHandleTimeoutMilliseconds) {
       timer.cancel();
-      dataToMainSendPort.send(DataReport(
-        DataReportType.error,
-        deviceInfo: deviceInfo,
-        message: 'Transfer timed out',
-      ));
+      dataToMainSendPort.send(ErrorReport(device: deviceInfo, message: "Transfer timed out"));
       receiverIsolate?.kill();
       Isolate.current.kill();
     }
-
     totalByteCountBefore = totalByteCount;
   });
 
@@ -157,7 +121,6 @@ void _dataHandler(List<dynamic> args) async {
         totalByteCount = 0;
         dataToMainSendPort.send(
           DataReport(
-            DataReportType.start,
             files: files,
             filesTransferred: filesTransferred,
             currentFile: currentFile,
@@ -174,24 +137,16 @@ void _dataHandler(List<dynamic> args) async {
       case ConnectionActionType.fileEnd:
         filesTransferred.add(currentFile);
         dataToMainSendPort.send(
-          DataReport(
-            DataReportType.info,
-            files: files,
-            filesTransferred: filesTransferred,
-            currentFile: message.currentFile,
-            speed: ((totalByteCount - totalByteCountBefore) * 1000 / duration.inMilliseconds) / 1024 / 1024,
-            progress: (100 * totalByteCount / currentFile.byteSize) > 100 ? 100 : (100 * totalByteCount / currentFile.byteSize),
-            deviceInfo: deviceInfo,
-          ),
+          FileEndReport(fileInfo: currentFile),
         );
         break;
       case ConnectionActionType.end:
-        dataToMainSendPort.send(DataReport(DataReportType.end, deviceInfo: deviceInfo, files: files));
+        dataToMainSendPort.send(EndReport(device: deviceInfo, files: files, endTime: DateTime.now()));
         receiverIsolate?.kill();
         Isolate.current.kill();
         break;
       case ConnectionActionType.error:
-        dataToMainSendPort.send(DataReport(DataReportType.error, message: message.message, deviceInfo: deviceInfo));
+        dataToMainSendPort.send(ErrorReport(device: deviceInfo, message: message.message));
         receiverIsolate?.kill();
         Isolate.current.kill();
         break;
@@ -218,14 +173,10 @@ void _receiver(List<dynamic> args) async {
 
     int totalRead = 0;
 
+    File tempFile = File(join(tempFolder.path, "${files.first.path!}.nocabtmp"));
     FileInfo currentFile = files.first;
-    File tempFile = File(join(tempFolder.path, "${currentFile.name}.nocabtmp"));
 
-    try {
-      await tempFile.create(recursive: true);
-    } catch (e) {
-      sendport.send(ConnectionAction(ConnectionActionType.error, message: 'Failed to create temp file'));
-    }
+    await tempFile.create(recursive: true);
 
     IOSink currentSink = tempFile.openWrite(mode: FileMode.append);
 
@@ -251,31 +202,17 @@ void _receiver(List<dynamic> args) async {
           if (totalRead == currentFile.byteSize) {
             socket?.close();
             sendport.send(ConnectionAction(ConnectionActionType.fileEnd, currentFile: currentFile, totalTransferredBytes: totalRead));
+
             files.removeAt(0);
             if (files.isNotEmpty) {
-              currentSink.close().then((value) async {
-                try {
-                  await FileOperations.tmpToFile(tempFile, currentFile);
-                } catch (e) {
-                  sendport.send(ConnectionAction(ConnectionActionType.error, message: 'Failed to move temp file\n$e'));
-                }
-                receiveFile();
-              });
+              currentSink.close().then((value) => FileOperations.tmpToFile(tempFile, currentFile));
+              receiveFile();
             } else {
-              currentSink.close().then((value) async {
-                try {
-                  await FileOperations.tmpToFile(tempFile, currentFile);
-                  await tempFolder.delete(recursive: true);
-                  sendport.send(ConnectionAction(ConnectionActionType.end));
-                } catch (e) {
-                  sendport.send(ConnectionAction(ConnectionActionType.error, message: 'Failed to move temp file\n$e'));
-                }
+              currentSink.close().then((value) {
+                return FileOperations.tmpToFile(tempFile, currentFile).then((value) => sendport.send(ConnectionAction(ConnectionActionType.end)));
               });
             }
           }
-          break;
-        case RawSocketEvent.closed:
-        case RawSocketEvent.readClosed:
           break;
         default:
           break;
