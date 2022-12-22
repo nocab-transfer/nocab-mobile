@@ -1,3 +1,5 @@
+import 'database/device_db.dart';
+
 class DeviceInfo {
   late String name;
   late String ip;
@@ -23,5 +25,13 @@ class DeviceInfo {
     data['opsystem'] = opsystem;
     data['deviceId'] = deviceId;
     return data;
+  }
+
+  DeviceDb toIsarDb({bool isCurrentDevice = false}) {
+    return DeviceDb()
+      ..deviceName = name
+      ..deviceIp = ip
+      ..deviceOs = opsystem
+      ..isCurrentDevice = isCurrentDevice;
   }
 }

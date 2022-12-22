@@ -3,8 +3,10 @@ import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nocab/custom_dialogs/receiver_dialog_bloc/receiver_dialog_state.dart';
+import 'package:nocab/models/database/transfer_db.dart';
 import 'package:nocab/models/deviceinfo_model.dart';
 import 'package:nocab/models/file_model.dart';
+import 'package:nocab/services/database/database.dart';
 import 'package:nocab/services/file_operations/file_operations.dart';
 import 'package:nocab/services/settings/settings.dart';
 import 'package:nocab/services/transfer/receiver.dart';
@@ -52,16 +54,31 @@ class ReceiverDialogCubit extends Cubit<ReceiverDialogState> {
               //TODO: Database ban check
               //TODO: Fail2Ban
               stopReceiver();
+
               request.transferUuid = const Uuid().v4();
+              Database().pushTransferToDb(TransferDatabase()
+                ..senderDevice = request.deviceInfo.toIsarDb()
+                ..receiverDevice = clientDeviceInfo.toIsarDb(isCurrentDevice: true)
+                ..files = request.files.map((e) => e.toIsarDb()).toList()
+                ..transferUuid = request.transferUuid!
+                ..requestedAt = DateTime.now()
+                ..status = TransferDbStatus.pendingForAcceptance
+                ..type = TransferDbType.download
+                ..managedBy = TransferDbManagedBy.user);
+
               emit(RequestConfirmation(request, socket));
-            } catch (_) {}
+            } catch (e) {
+              socket.close();
+            }
           });
         },
       );
     } on SocketException catch (e) {
       stopReceiver();
-      emit(TransferFailed(null,
-          "Message: ${e.message}\nOs Message: ${e.osError?.message}\nError Code: ${e.osError?.errorCode}\nAdress: ${e.address?.address}:${e.port}"));
+      emit(TransferFailed(
+        null,
+        "Message: ${e.message}\nOs Message: ${e.osError?.message}\nError Code: ${e.osError?.errorCode}\nAdress: ${e.address?.address}:${e.port}",
+      ));
     }
   }
 
@@ -76,7 +93,7 @@ class ReceiverDialogCubit extends Cubit<ReceiverDialogState> {
     // initialize files for start transfer
     var downloadDirectory = await FileOperations.getDownloadPath();
     if (downloadDirectory == null) {
-      throw Exception("Download directory not found");
+      return emit(TransferFailed(request.deviceInfo, "Download directory not found"));
     }
 
     request.files = request.files.map<FileInfo>((e) {
@@ -91,6 +108,12 @@ class ReceiverDialogCubit extends Cubit<ReceiverDialogState> {
     socket.write(base64.encode(utf8.encode(json.encode(shareResponse.toJson()))));
     socket.close();
 
+    Database().updateTransfer(
+      request.transferUuid!,
+      status: TransferDbStatus.ongoing,
+      managedBy: TransferDbManagedBy.user,
+    );
+
     Receiver(
       deviceInfo: request.deviceInfo,
       files: request.files,
@@ -99,6 +122,8 @@ class ReceiverDialogCubit extends Cubit<ReceiverDialogState> {
     )
       ..start()
       ..onEvent.listen((event) {
+        Database().updateTransferByReport(event);
+
         switch (event.runtimeType) {
           case DataReport:
             event as DataReport;

@@ -22,7 +22,7 @@ class MainScreen extends StatelessWidget {
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold, fontFamily: "VarelaRound"),
         ),
         actions: [
-          /*TextButton.icon(
+          TextButton.icon(
             onPressed: () {},
             style: TextButton.styleFrom(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -30,7 +30,7 @@ class MainScreen extends StatelessWidget {
             ),
             label: const Text('History'),
             icon: const Icon(Icons.history_rounded),
-          ),*/
+          ),
           IconButton(
             onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const Settings())),
             style: IconButton.styleFrom(
