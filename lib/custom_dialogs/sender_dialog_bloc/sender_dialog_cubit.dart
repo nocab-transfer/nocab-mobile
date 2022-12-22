@@ -13,7 +13,13 @@ import 'package:nocab/services/transfer/sender.dart';
 class SenderDialogCubit extends Cubit<SenderDialogState> {
   SenderDialogCubit() : super(const SenderInit());
 
-  Future<void> pickFiles() async {
+  Future<void> start(List<FileInfo>? files) async {
+    if (files?.isNotEmpty ?? false) return emit(FileConfirmation(files!));
+
+    await _pickFiles();
+  }
+
+  Future<void> _pickFiles() async {
     emit(const FileCacheLoading());
 
     List<FileInfo>? files = await FilePicker.platform

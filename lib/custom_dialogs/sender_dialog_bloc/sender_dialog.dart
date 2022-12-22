@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nocab/models/file_model.dart';
 
 import 'sender_dialog_cubit.dart';
 import 'sender_dialog_state.dart';
 import 'sender_dialog_state_views.dart';
 
 class SenderDialog extends StatelessWidget {
-  const SenderDialog({Key? key}) : super(key: key);
+  final List<FileInfo>? files;
+  const SenderDialog({super.key, this.files});
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async => false,
       child: BlocProvider(
-        create: (context) => SenderDialogCubit()..pickFiles(),
+        create: (context) => SenderDialogCubit()..start(files),
         child: buildWidget(),
       ),
     );
