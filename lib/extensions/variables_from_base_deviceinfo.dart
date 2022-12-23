@@ -4,7 +4,7 @@ extension DeviceInfoPluginExtension on BaseDeviceInfo {
   String get deviceName {
     switch (runtimeType) {
       case AndroidDeviceInfo:
-        return (this as AndroidDeviceInfo).model ?? "Android";
+        return (this as AndroidDeviceInfo).model;
       case IosDeviceInfo:
         return (this as IosDeviceInfo).name ?? "iPhone";
       default:
