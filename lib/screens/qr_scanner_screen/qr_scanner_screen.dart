@@ -3,17 +3,13 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 
 class QrScanner extends StatelessWidget {
   final Function(String rawData) onScan;
-  QrScanner({Key? key, required this.onScan}) : super(key: key);
-
-  final MobileScannerController cameraController = MobileScannerController();
+  const QrScanner({Key? key, required this.onScan}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: MobileScanner(
-        allowDuplicates: false,
-        controller: cameraController,
-        onDetect: (barcode, args) => onScan.call(barcode.rawValue ?? ""),
+        onDetect: (capture) => onScan.call(capture.barcodes.first.rawValue ?? ""),
       ),
     );
   }
