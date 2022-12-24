@@ -80,7 +80,7 @@ class FileConfirmationView extends StatelessWidget {
                             try {
                               var deviceInfoRaw = utf8.decode(base64.decode(code));
                               var deviceInfo = DeviceInfo.fromJson(json.decode(deviceInfoRaw));
-                              Navigator.pop(context, deviceInfo);
+                              Navigator.maybePop(context, deviceInfo);
                             } catch (e) {
                               // TODO: Show error
                             }

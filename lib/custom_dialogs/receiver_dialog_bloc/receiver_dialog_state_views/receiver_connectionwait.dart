@@ -91,7 +91,7 @@ class ConnectionWaitView extends StatelessWidget {
                                 socket.write(base64
                                     .encode(utf8.encode(json.encode({"verificationString": verificationString, "deviceInfo": deviceInfo.toJson()}))));
                               });
-                              Navigator.pop(context);
+                              Navigator.maybePop(context);
                             } catch (e) {
                               // TODO: Show error
                             }

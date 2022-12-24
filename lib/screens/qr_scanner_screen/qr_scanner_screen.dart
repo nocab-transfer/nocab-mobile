@@ -9,7 +9,7 @@ class QrScanner extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: MobileScanner(
-        onDetect: (capture) => onScan.call(capture.barcodes.first.rawValue ?? ""),
+        onDetect: (capture) => onScan(capture.barcodes.first.rawValue ?? ""),
       ),
     );
   }
