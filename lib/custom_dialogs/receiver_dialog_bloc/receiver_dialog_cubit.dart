@@ -145,6 +145,13 @@ class ReceiverDialogCubit extends Cubit<ReceiverDialogState> {
   Future<void> rejectRequest(ShareRequest request, Socket socket, {String? message}) async {
     ShareResponse shareResponse = ShareResponse(response: false, info: message ?? "User rejected request");
 
+    Database().updateTransfer(
+      request.transferUuid!,
+      status: TransferDbStatus.declined,
+      managedBy: TransferDbManagedBy.user,
+      message: message ?? "User rejected request",
+    );
+
     socket.write(base64.encode(utf8.encode(json.encode(shareResponse.toJson()))));
     await socket.close();
   }
