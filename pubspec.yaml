@@ -60,6 +60,7 @@ flutter:
     - assets/images/human.svg
     - assets/images/paperplane.svg
     - assets/images/airplane.svg
+    - assets/images/history_empty_state.svg
   fonts:
     - family: VarelaRound
       fonts:

@@ -52,6 +52,7 @@ _processFilesAndShowDialog(List<String> paths) async {
     await Future.delayed(const Duration(milliseconds: 100));
   }
 
+  // ignore: use_build_context_synchronously
   showModal(
     context: navigatorKey.currentState!.context,
     configuration: const FadeScaleTransitionConfiguration(barrierDismissible: false),
