@@ -56,7 +56,7 @@ class SenderDialogCubit extends Cubit<SenderDialogState> {
         name: SettingsService().getSettings.deviceName,
         ip: await SettingsService().getCurrentIp,
         port: SettingsService().getSettings.mainPort,
-        opsystem: Platform.operatingSystem,
+        opsystem: Platform.operatingSystemVersion,
         deviceId: "",
       ),
       files: files,
