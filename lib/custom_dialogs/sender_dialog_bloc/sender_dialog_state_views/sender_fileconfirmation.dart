@@ -42,11 +42,14 @@ class FileConfirmationView extends StatelessWidget {
                 ],
               ),
               Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: FileList(
-                  files: files,
-                  height: files.length * 66 > 350 ? 350 : files.length * 66,
-                  width: MediaQuery.of(context).size.width - 50,
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height / 3),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Theme.of(context).colorScheme.surfaceVariant,
+                  ),
+                  child: FileList(files: files),
                 ),
               ),
               Text(
