@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nocab/models/deviceinfo_model.dart';
-import 'package:nocab/models/file_model.dart';
+import 'package:nocab_core/nocab_core.dart';
 
 class TransferringView extends StatelessWidget {
   final DeviceInfo serverDeviceInfo;

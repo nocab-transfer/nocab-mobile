@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nocab/models/deviceinfo_model.dart';
+import 'package:nocab_core/nocab_core.dart';
 
 class ConnectingView extends StatelessWidget {
   final DeviceInfo serverDeviceInfo;
@@ -37,7 +37,7 @@ class ConnectingView extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
                 Text(
-                  "${serverDeviceInfo.ip}:${serverDeviceInfo.port}\n${serverDeviceInfo.opsystem}",
+                  "${serverDeviceInfo.ip}:${serverDeviceInfo.requestPort}\n${serverDeviceInfo.opsystem}",
                   style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.grey),
                   textAlign: TextAlign.center,
                 ),
