@@ -547,7 +547,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "2d3a3d8d2d84d7938c133963ef84a28278046933"
+      resolved-ref: "7fe47b98b7041dd09f1c179f6511e2e7c7cf1ecc"
       url: "https://github.com/nocab-transfer/nocab-core.git"
     source: git
     version: "1.0.0"
