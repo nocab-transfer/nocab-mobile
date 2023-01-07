@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,14 +10,15 @@ import 'package:path_provider/path_provider.dart';
 class ReceiverDialogCubit extends Cubit<ReceiverDialogState> {
   ReceiverDialogCubit() : super(const ReceiverInit());
 
+  StreamSubscription? _requestSubscription;
+
   Future<void> startReceiver() async {
     await Radar().start();
     await RequestListener().start(onError: (p0) => TransferFailed(null, p0.toString()));
-    RequestListener().onRequest;
 
     emit(ConnectionWait(DeviceManager().currentDeviceInfo));
 
-    RequestListener().onRequest.listen((event) {
+    _requestSubscription = RequestListener().onRequest.listen((event) {
       stopReceiver();
       Database().registerRequest(
         request: event,
@@ -24,11 +26,12 @@ class ReceiverDialogCubit extends Cubit<ReceiverDialogState> {
         senderDeviceInfo: event.deviceInfo,
         thisIsSender: false,
       );
-      if (!isClosed) emit(RequestConfirmation(event, event.socket));
+      emit(RequestConfirmation(event, event.socket));
     });
   }
 
   Future<void> stopReceiver() async {
+    _requestSubscription?.cancel();
     RequestListener().stop();
     Radar().stop();
   }
