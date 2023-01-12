@@ -8,6 +8,7 @@ import 'package:nocab/custom_dialogs/settings_dialogs/settings_dialogs.dart';
 import 'package:nocab/extensions/lang_code_to_name.dart';
 import 'package:nocab/models/settings_model.dart';
 import 'package:nocab/provider/theme_provider.dart';
+import 'package:nocab/screens/logs/logs.dart';
 import 'package:nocab/screens/settings/setting_card.dart';
 import 'package:nocab/services/settings/settings.dart';
 import 'package:provider/provider.dart';
@@ -48,7 +49,10 @@ class _SettingsState extends State<Settings> {
                 icon: const Icon(Icons.arrow_back_ios_rounded),
               ),
               const SizedBox(width: 8),
-              const Text("Settings"),
+              GestureDetector(
+                onDoubleTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const Logs())),
+                child: const Text("Settings"),
+              ),
             ],
           ),
           automaticallyImplyLeading: false,
