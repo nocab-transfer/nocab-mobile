@@ -3,7 +3,7 @@ description: A file sharing app between your devices.
 
 publish_to: 'none' 
 
-version: 0.2.0+1
+version: 0.3.1+1
 
 environment:
   sdk: ">=2.18.0-271.7.beta <3.0.0"
@@ -38,6 +38,10 @@ dependencies:
   isar: ^3.0.5
   isar_flutter_libs: ^3.0.5
   uuid: ^3.0.7
+  share_plus: ^6.3.0
+  nocab_core:
+    git:
+      url: https://github.com/nocab-transfer/nocab-core.git
 
 dev_dependencies:
   isar_generator: ^3.0.2

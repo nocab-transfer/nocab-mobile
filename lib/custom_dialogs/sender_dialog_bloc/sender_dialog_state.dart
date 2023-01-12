@@ -1,5 +1,4 @@
-import 'package:nocab/models/deviceinfo_model.dart';
-import 'package:nocab/models/file_model.dart';
+import 'package:nocab_core/nocab_core.dart';
 
 abstract class SenderDialogState {
   const SenderDialogState();

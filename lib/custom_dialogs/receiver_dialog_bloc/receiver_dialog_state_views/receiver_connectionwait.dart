@@ -3,8 +3,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:nocab/custom_widgets/svh_color_handler/svg_color_handler.dart';
-import 'package:nocab/models/deviceinfo_model.dart';
 import 'package:nocab/screens/qr_scanner_screen/qr_scanner_screen.dart';
+import 'package:nocab_core/nocab_core.dart';
 
 class ConnectionWaitView extends StatelessWidget {
   final DeviceInfo deviceInfo;

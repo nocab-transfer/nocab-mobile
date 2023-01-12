@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nocab/custom_widgets/file_list/file_list.dart';
-import 'package:nocab/models/file_model.dart';
+import 'package:nocab_core/nocab_core.dart';
 
 class RequestConfirmationView extends StatelessWidget {
   final ShareRequest request;

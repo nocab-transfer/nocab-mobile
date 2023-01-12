@@ -1,13 +1,13 @@
 import 'package:animations/animations.dart';
 import 'package:nocab/custom_dialogs/sender_dialog_bloc/sender_dialog.dart';
-import 'package:nocab/models/file_model.dart';
+
 import 'package:nocab/provider/theme_provider.dart';
 import 'package:nocab/screens/main_screen/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:nocab/services/database/database.dart';
-import 'package:nocab/services/file_operations/file_operations.dart';
 import 'package:nocab/services/settings/settings.dart';
 import 'package:nocab/services/share_intent/share_intent.dart';
+import 'package:nocab_core/nocab_core.dart';
 import 'package:provider/provider.dart';
 
 Future<void> main() async {
@@ -15,7 +15,13 @@ Future<void> main() async {
   // TODO: Make first launch screen
   // ignore: unused_local_variable
   var isFirstRun = await SettingsService().initialize();
+
   ShareIntent().initialize(onData: (paths) => _processFilesAndShowDialog(paths));
+  DeviceManager().initialize(
+    SettingsService().getSettings.deviceName,
+    await SettingsService().getCurrentIp,
+    SettingsService().getSettings.mainPort,
+  );
   await Database().initialize();
   runApp(ChangeNotifierProvider(
     create: (context) => ThemeProvider(

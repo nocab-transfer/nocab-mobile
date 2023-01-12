@@ -4,9 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:nocab/custom_widgets/device_finder_bloc/device_finder.dart';
 import 'package:nocab/custom_widgets/file_list/file_list.dart';
 import 'package:nocab/extensions/size_extension.dart';
-import 'package:nocab/models/deviceinfo_model.dart';
-import 'package:nocab/models/file_model.dart';
 import 'package:nocab/screens/qr_scanner_screen/qr_scanner_screen.dart';
+import 'package:nocab_core/nocab_core.dart';
 
 class FileConfirmationView extends StatelessWidget {
   final List<FileInfo> files;
