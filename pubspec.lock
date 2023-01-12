@@ -185,6 +185,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.1"
+  cross_file:
+    dependency: transitive
+    description:
+      name: cross_file
+      sha256: f71079978789bc2fe78d79227f1f8cfe195b31bbd8db2399b0d15a4b96fb843b
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.3+2"
   crypto:
     dependency: "direct main"
     description:
@@ -547,8 +555,17 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "7fe47b98b7041dd09f1c179f6511e2e7c7cf1ecc"
+      resolved-ref: "0b61eb087db9a59500fa4419e2b42d06d1ea514d"
       url: "https://github.com/nocab-transfer/nocab-core.git"
+    source: git
+    version: "1.0.0"
+  nocab_logger:
+    dependency: transitive
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: "01438e8104507d90bc36540226f19e1b8445df14"
+      url: "https://github.com/nocab-transfer/nocab-logger"
     source: git
     version: "1.0.0"
   open_filex:
@@ -783,6 +800,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.5"
+  share_plus:
+    dependency: "direct main"
+    description:
+      name: share_plus
+      sha256: e387077716f80609bb979cd199331033326033ecd1c8f200a90c5f57b1c9f55e
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.3.0"
+  share_plus_platform_interface:
+    dependency: transitive
+    description:
+      name: share_plus_platform_interface
+      sha256: "82ddd4ab9260c295e6e39612d4ff00390b9a7a21f1bb1da771e2f232d80ab8a1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.2.0"
   shared_preferences:
     dependency: transitive
     description:
