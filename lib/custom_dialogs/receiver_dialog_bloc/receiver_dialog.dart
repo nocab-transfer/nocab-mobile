@@ -30,9 +30,8 @@ class ReceiverDialog extends StatelessWidget {
       case RequestConfirmation:
         return RequestConfirmationView(
           request: (state as RequestConfirmation).shareRequest,
-          onAccepted: () => context.read<ReceiverDialogCubit>().acceptRequest(state.shareRequest, state.socket),
-          onRejected: () =>
-              context.read<ReceiverDialogCubit>().rejectRequest(state.shareRequest, state.socket).then((value) => Navigator.pop(context)),
+          onAccepted: () => context.read<ReceiverDialogCubit>().acceptRequest(state.shareRequest),
+          onRejected: () => context.read<ReceiverDialogCubit>().rejectRequest(state.shareRequest).then((value) => Navigator.pop(context)),
         );
       case Connecting:
         return ConnectingView(serverDeviceInfo: (state as Connecting).serverDeviceInfo);

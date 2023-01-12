@@ -542,6 +542,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0"
+  nocab_core:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: "7fe47b98b7041dd09f1c179f6511e2e7c7cf1ecc"
+      url: "https://github.com/nocab-transfer/nocab-core.git"
+    source: git
+    version: "1.0.0"
   open_filex:
     dependency: "direct main"
     description:
@@ -1084,5 +1093,5 @@ packages:
     source: hosted
     version: "3.1.1"
 sdks:
-  dart: ">=2.19.0-345.0.dev <4.0.0"
+  dart: ">=3.0.0-71.0.dev <4.0.0"
   flutter: ">=3.0.0"

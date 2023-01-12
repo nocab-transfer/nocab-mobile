@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:nocab/models/file_model.dart';
+import 'package:nocab_core/nocab_core.dart';
 
 import 'sender_dialog_cubit.dart';
 import 'sender_dialog_state.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nocab/models/deviceinfo_model.dart';
+import 'package:nocab_core/nocab_core.dart';
 
 class ConnectingView extends StatelessWidget {
   final DeviceInfo serverDeviceInfo;

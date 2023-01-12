@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:nocab/custom_widgets/device_finder_bloc/device_finder_cubit.dart';
 import 'package:nocab/custom_widgets/device_finder_bloc/device_finder_state.dart';
-import 'package:nocab/models/deviceinfo_model.dart';
+import 'package:nocab_core/nocab_core.dart';
 
 class DeviceFinder extends StatefulWidget {
   final Function(DeviceInfo deviceInfo)? onPressed;

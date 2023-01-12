@@ -4,9 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:nocab/custom_widgets/device_finder_bloc/device_finder.dart';
 import 'package:nocab/custom_widgets/file_list/file_list.dart';
 import 'package:nocab/extensions/size_extension.dart';
-import 'package:nocab/models/deviceinfo_model.dart';
-import 'package:nocab/models/file_model.dart';
 import 'package:nocab/screens/qr_scanner_screen/qr_scanner_screen.dart';
+import 'package:nocab_core/nocab_core.dart';
 
 class FileConfirmationView extends StatelessWidget {
   final List<FileInfo> files;
@@ -42,11 +41,14 @@ class FileConfirmationView extends StatelessWidget {
                 ],
               ),
               Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: FileList(
-                  files: files,
-                  height: files.length * 66 > 350 ? 350 : files.length * 66,
-                  width: MediaQuery.of(context).size.width - 50,
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height / 3),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Theme.of(context).colorScheme.surfaceVariant,
+                  ),
+                  child: FileList(files: files),
                 ),
               ),
               Text(

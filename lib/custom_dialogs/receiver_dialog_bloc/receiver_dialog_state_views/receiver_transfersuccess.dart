@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nocab/custom_widgets/file_list/file_list.dart';
-import 'package:nocab/models/deviceinfo_model.dart';
-import 'package:nocab/models/file_model.dart';
+import 'package:nocab_core/nocab_core.dart';
 import 'package:open_filex/open_filex.dart';
 
 class TransferSuccessView extends StatelessWidget {
@@ -51,18 +50,14 @@ class TransferSuccessView extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Container(
+                          constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height / 3),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
                             color: Theme.of(context).colorScheme.surfaceVariant,
                           ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: FileList(
-                              files: files,
-                              height: files.length * 66 > 350 ? 350 : files.length * 66,
-                              width: MediaQuery.of(context).size.width - 50,
-                              onTap: (FileInfo file) => OpenFilex.open(file.path),
-                            ),
+                          child: FileList(
+                            files: files,
+                            onTap: (FileInfo file) => OpenFilex.open(file.path),
                           ),
                         ),
                       ),

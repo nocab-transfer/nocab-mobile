@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nocab/custom_widgets/file_list/file_list.dart';
-import 'package:nocab/models/file_model.dart';
+import 'package:nocab_core/nocab_core.dart';
 
 class RequestConfirmationView extends StatelessWidget {
   final ShareRequest request;
@@ -55,10 +55,12 @@ class RequestConfirmationView extends StatelessWidget {
                   style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontWeight: FontWeight.w600),
                 ),
               ),
-              FileList(
-                files: request.files,
-                height: request.files.length * 66 > 350 ? 350 : request.files.length * 66,
-                width: MediaQuery.of(context).size.width - 50,
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height / 3),
+                  child: FileList(files: request.files),
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),

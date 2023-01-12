@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nocab/models/deviceinfo_model.dart';
-import 'package:nocab/models/file_model.dart';
+import 'package:nocab_core/nocab_core.dart';
 
 class TransferSuccessView extends StatelessWidget {
   final DeviceInfo serverDeviceInfo;
