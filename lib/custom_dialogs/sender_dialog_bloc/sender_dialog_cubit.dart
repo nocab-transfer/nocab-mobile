@@ -49,7 +49,9 @@ class SenderDialogCubit extends Cubit<SenderDialogState> {
       thisIsSender: true,
     );
 
-    RequestMaker.requestTo(serverDeviceInfo, request: shareRequest, onError: (p0) => emit(TransferFailed(serverDeviceInfo, p0.toString())));
+    RequestMaker.requestTo(serverDeviceInfo, request: shareRequest, onError: (p0) => emit(TransferFailed(serverDeviceInfo, p0.title)));
+    if (state is TransferFailed) return;
+
     emit(RequestSent(serverDeviceInfo));
 
     var response = await shareRequest.onResponse;
