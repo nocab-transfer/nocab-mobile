@@ -80,7 +80,7 @@ class SenderDialogCubit extends Cubit<SenderDialogState> {
           break;
         case ErrorReport:
           event as ErrorReport;
-          emit(TransferFailed(serverDeviceInfo, event.error.message));
+          emit(TransferFailed(serverDeviceInfo, event.error.title));
           break;
         default:
       }

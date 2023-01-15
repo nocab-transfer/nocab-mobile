@@ -69,7 +69,7 @@ class ReceiverDialogCubit extends Cubit<ReceiverDialogState> {
           break;
         case ErrorReport:
           event as ErrorReport;
-          emit(TransferFailed(request.deviceInfo, event.error.message));
+          emit(TransferFailed(request.deviceInfo, event.error.title));
           break;
         default:
       }
