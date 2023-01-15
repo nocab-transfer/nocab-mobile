@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:nocab/custom_widgets/device_finder_bloc/device_finder_cubit.dart';
 import 'package:nocab/custom_widgets/device_finder_bloc/device_finder_state.dart';
 import 'package:nocab_core/nocab_core.dart';
+import 'package:vibration/vibration.dart';
 
 class DeviceFinder extends StatefulWidget {
   final Function(DeviceInfo deviceInfo)? onPressed;
@@ -28,7 +28,15 @@ class _DeviceFinderState extends State<DeviceFinder> {
   Widget buildWidget() => BlocConsumer<DeviceFinderCubit, DeviceFinderState>(
         listener: (context, state) {
           if (state is Found && !isVibrated) {
-            Vibrate.canVibrate.then((value) => Vibrate.vibrate());
+            Vibration.hasVibrator().then((value) async {
+              if (value == false) return;
+              var control = await Vibration.hasCustomVibrationsSupport();
+              if (control == true) {
+                return Vibration.vibrate(pattern: [0, 150, 75, 150], intensities: [0, 255, 0, 255]);
+              }
+
+              return Vibration.vibrate(duration: 500);
+            });
             isVibrated = true;
             widget.onDeviceFound?.call(state.devices);
           }
