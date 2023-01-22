@@ -12,6 +12,7 @@ import 'package:nocab/screens/logs/logs.dart';
 import 'package:nocab/screens/settings/setting_card.dart';
 import 'package:nocab/services/settings/settings.dart';
 import 'package:provider/provider.dart';
+import 'package:nocab_core/nocab_core.dart';
 
 class Settings extends StatefulWidget {
   const Settings({Key? key}) : super(key: key);
@@ -94,9 +95,10 @@ class _SettingsState extends State<Settings> {
                         onSaved: (text) {
                           if (text.trim().isNotEmpty) {
                             SettingsService().setSettings(SettingsService().getSettings.copyWith(deviceName: text));
-                            return;
+                            DeviceManager().updateDeviceInfo(name: text);
                           }
                           SettingsService().setSettings(SettingsService().getSettings.copyWith(deviceName: Platform.operatingSystem));
+                          DeviceManager().updateDeviceInfo(name: Platform.operatingSystem);
                         },
                       ),
                     ),
