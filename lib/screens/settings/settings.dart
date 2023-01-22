@@ -96,6 +96,7 @@ class _SettingsState extends State<Settings> {
                           if (text.trim().isNotEmpty) {
                             SettingsService().setSettings(SettingsService().getSettings.copyWith(deviceName: text));
                             DeviceManager().updateDeviceInfo(name: text);
+                            return;
                           }
                           SettingsService().setSettings(SettingsService().getSettings.copyWith(deviceName: Platform.operatingSystem));
                           DeviceManager().updateDeviceInfo(name: Platform.operatingSystem);
