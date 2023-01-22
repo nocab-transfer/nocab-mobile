@@ -8,7 +8,6 @@ class SettingsModel {
   late final bool darkMode;
   late final Color seedColor;
   late final Locale locale;
-  late final String networkInterfaceName;
   late String downloadPath;
   late DateFormatType dateFormatType;
 
@@ -19,7 +18,6 @@ class SettingsModel {
     required this.darkMode,
     required this.locale,
     required this.seedColor,
-    required this.networkInterfaceName,
     required this.downloadPath,
     required this.dateFormatType,
   });
@@ -31,7 +29,6 @@ class SettingsModel {
     darkMode = json['darkMode'];
     locale = Locale(json['language']);
     seedColor = Color(json['seedColor']);
-    networkInterfaceName = json['networkInterfaceName'];
     downloadPath = json['downloadPath'];
     dateFormatType = DateFormatType.getFromName(json['dateFormatType'] ?? "normal24");
   }
@@ -44,7 +41,6 @@ class SettingsModel {
     data['darkMode'] = darkMode;
     data['language'] = locale.languageCode;
     data['seedColor'] = seedColor.value;
-    data['networkInterfaceName'] = networkInterfaceName;
     data['downloadPath'] = downloadPath;
     data['dateFormatType'] = dateFormatType.name;
     return data;
@@ -61,7 +57,6 @@ extension SettingsExtenios on SettingsModel {
     Color? seedColor,
     bool? useSystemColor,
     String? language,
-    String? networkInterfaceName,
     String? downloadPath,
     DateFormatType? dateFormatType,
   }) {
@@ -72,7 +67,6 @@ extension SettingsExtenios on SettingsModel {
       darkMode: darkMode ?? this.darkMode,
       seedColor: seedColor ?? this.seedColor,
       locale: Locale(language ?? locale.languageCode),
-      networkInterfaceName: networkInterfaceName ?? this.networkInterfaceName,
       downloadPath: downloadPath ?? this.downloadPath,
       dateFormatType: dateFormatType ?? this.dateFormatType,
     );

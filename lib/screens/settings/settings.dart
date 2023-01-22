@@ -109,37 +109,6 @@ class _SettingsState extends State<Settings> {
                     leading: Icons.device_unknown_rounded,
                   ),
                   SettingCard(
-                    title: 'Network Interface',
-                    caption: 'The network interface to use for communication',
-                    leading: Icons.network_check_rounded,
-                    onTap: () {
-                      NetworkInterface.list().then((interfaces) {
-                        showModal(
-                          context: context,
-                          builder: (context) => SettingsDialogs.selection(
-                            title: "Network Interface",
-                            subtitle: "The network interface to use for communication",
-                            items: interfaces
-                                .map((e) => SettingsDialogSelectionItem<NetworkInterface>(
-                                      title: e.name.toUpperCase(),
-                                      subtitle: e.addresses.map((e) => e.address).join("\n"),
-                                      selected: SettingsService().getSettings.networkInterfaceName == e.name,
-                                      value: e,
-                                    ))
-                                .toList(),
-                            onItemClicked: (value) => SettingsService().setSettings(
-                              SettingsService().getSettings.copyWith(networkInterfaceName: value.name),
-                            ),
-                          ),
-                        );
-                      });
-                    },
-                    widget: const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Icon(Icons.arrow_forward_ios_rounded),
-                    ),
-                  ),
-                  SettingCard(
                     title: 'Theme Color',
                     caption: 'Change the color of the application',
                     leading: Icons.color_lens_rounded,

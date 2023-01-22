@@ -29,11 +29,6 @@ class SettingsService {
   final _changeController = StreamController<SettingsModel>.broadcast();
   Stream<SettingsModel> get onSettingChanged => _changeController.stream;
 
-  Future<String> get getCurrentIp async {
-    if (_settings == null) throw Exception("Settings not initialized");
-    return (await NetworkInterface.list()).firstWhere((element) => element.name == _settings!.networkInterfaceName).addresses.first.address;
-  }
-
   SettingsModel? _settings;
   SettingsModel get getSettings {
     if (_settings == null) throw Exception("Settings not initialized");
@@ -74,7 +69,6 @@ class SettingsService {
       finderPort: 62193,
       locale: rawLocale.contains('_') ? Locale(rawLocale.split('_')[0]) : Locale(rawLocale),
       seedColor: Colors.deepPurpleAccent,
-      networkInterfaceName: (await Network.getCurrentNetworkInterface(await NetworkInterface.list())).name,
       downloadPath: Platform.isAndroid
           ? "/storage/emulated/0/Download"
           : Platform.isIOS
