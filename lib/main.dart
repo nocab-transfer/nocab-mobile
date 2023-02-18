@@ -9,6 +9,7 @@ import 'package:nocab/services/network/network.dart';
 import 'package:nocab/services/settings/settings.dart';
 import 'package:nocab/services/share_intent/share_intent.dart';
 import 'package:nocab_core/nocab_core.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 Future<void> main() async {
@@ -18,14 +19,13 @@ Future<void> main() async {
   var isFirstRun = await SettingsService().initialize();
 
   ShareIntent().initialize(onData: (paths) => _processFilesAndShowDialog(paths));
-
-  DeviceManager().initialize(
-    SettingsService().getSettings.deviceName,
-    await Network().getLocalIp() ?? '',
-    SettingsService().getSettings.mainPort,
+  Network().initialize((ip) => NoCabCore().updateDeviceInfo(ip: ip));
+  NoCabCore.init(
+    deviceName: SettingsService().getSettings.deviceName,
+    deviceIp: (await Network().getLocalIp()) ?? '',
+    requestPort: SettingsService().getSettings.mainPort,
+    logFolderPath: (await getTemporaryDirectory()).path,
   );
-
-  Network().initialize((ip) => DeviceManager().updateDeviceInfo(ip: ip));
 
   await Database().initialize();
 

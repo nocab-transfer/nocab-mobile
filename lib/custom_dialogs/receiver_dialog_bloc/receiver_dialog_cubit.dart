@@ -14,15 +14,20 @@ class ReceiverDialogCubit extends Cubit<ReceiverDialogState> {
 
   Future<void> startReceiver() async {
     await Radar().start();
-    await RequestListener().start(onError: (p0) => TransferFailed(null, p0.title));
+    try {
+      await RequestListener().start();
+    } catch (e) {
+      emit(ConnectionWait(NoCabCore().currentDeviceInfo));
+      return;
+    }
 
-    emit(ConnectionWait(DeviceManager().currentDeviceInfo));
+    emit(ConnectionWait(NoCabCore().currentDeviceInfo));
 
     _requestSubscription = RequestListener().onRequest.listen((event) {
       stopReceiver();
       Database().registerRequest(
         request: event,
-        receiverDeviceInfo: DeviceManager().currentDeviceInfo,
+        receiverDeviceInfo: NoCabCore().currentDeviceInfo,
         senderDeviceInfo: event.deviceInfo,
         thisIsSender: false,
       );
@@ -44,11 +49,15 @@ class ReceiverDialogCubit extends Cubit<ReceiverDialogState> {
 
     if (downloadPath == null) return;
 
-    request.accept(
-      downloadDirectory: Directory(downloadPath),
-      tempDirectory: await Directory.systemTemp.createTemp(),
-      onError: (p0) => TransferFailed(request.deviceInfo, p0.title),
-    );
+    try {
+      request.accept(
+        downloadDirectory: Directory(downloadPath),
+        tempDirectory: await Directory.systemTemp.createTemp(),
+      );
+    } catch (e) {
+      emit(TransferFailed(request.deviceInfo, e.toString()));
+      return;
+    }
 
     request.linkedTransfer?.onEvent.listen((event) {
       switch (event.runtimeType) {
@@ -71,13 +80,18 @@ class ReceiverDialogCubit extends Cubit<ReceiverDialogState> {
           event as ErrorReport;
           emit(TransferFailed(request.deviceInfo, event.error.title));
           break;
+        // TODO: Cancel report
         default:
       }
     });
   }
 
   Future<void> rejectRequest(ShareRequest request, {String? message}) async {
-    request.reject(info: message, onError: (p0) => TransferFailed(request.deviceInfo, p0.title));
+    try {
+      request.reject(info: message);
+    } catch (e) {
+      emit(TransferFailed(request.deviceInfo, e.toString()));
+    }
   }
 
   Future<String?> getDownloadPath() async {

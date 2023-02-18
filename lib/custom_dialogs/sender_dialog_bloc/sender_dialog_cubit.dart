@@ -40,7 +40,8 @@ class SenderDialogCubit extends Cubit<SenderDialogState> {
   Future<void> send({required DeviceInfo serverDeviceInfo, required List<FileInfo> files}) async {
     emit(Connecting(serverDeviceInfo));
 
-    ShareRequest shareRequest = RequestMaker.create(files: files, transferPort: await Network.getUnusedPort());
+    ShareRequest shareRequest =
+        RequestMaker.create(files: files, transferPort: await Network.getUnusedPort(), controlPort: await Network.getUnusedPort());
 
     Database().registerRequest(
       request: shareRequest,
@@ -49,10 +50,13 @@ class SenderDialogCubit extends Cubit<SenderDialogState> {
       thisIsSender: true,
     );
 
-    RequestMaker.requestTo(serverDeviceInfo, request: shareRequest, onError: (p0) => emit(TransferFailed(serverDeviceInfo, p0.title)));
-    if (state is TransferFailed) return;
-
-    emit(RequestSent(serverDeviceInfo));
+    try {
+      RequestMaker.requestTo(serverDeviceInfo, request: shareRequest);
+      emit(RequestSent(serverDeviceInfo));
+    } catch (e) {
+      emit(TransferFailed(serverDeviceInfo, e.toString()));
+      return;
+    }
 
     var response = await shareRequest.onResponse;
 

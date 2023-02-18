@@ -8,7 +8,6 @@ import 'package:nocab/custom_dialogs/settings_dialogs/settings_dialogs.dart';
 import 'package:nocab/extensions/lang_code_to_name.dart';
 import 'package:nocab/models/settings_model.dart';
 import 'package:nocab/provider/theme_provider.dart';
-import 'package:nocab/screens/logs/logs.dart';
 import 'package:nocab/screens/settings/setting_card.dart';
 import 'package:nocab/services/settings/settings.dart';
 import 'package:provider/provider.dart';
@@ -51,7 +50,7 @@ class _SettingsState extends State<Settings> {
               ),
               const SizedBox(width: 8),
               GestureDetector(
-                onDoubleTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const Logs())),
+                onDoubleTap: () {}, //Navigator.push(context, MaterialPageRoute(builder: (context) => const Logs())),
                 child: const Text("Settings"),
               ),
             ],
@@ -95,11 +94,11 @@ class _SettingsState extends State<Settings> {
                         onSaved: (text) {
                           if (text.trim().isNotEmpty) {
                             SettingsService().setSettings(SettingsService().getSettings.copyWith(deviceName: text));
-                            DeviceManager().updateDeviceInfo(name: text);
+                            NoCabCore().updateDeviceInfo(name: text);
                             return;
                           }
                           SettingsService().setSettings(SettingsService().getSettings.copyWith(deviceName: Platform.operatingSystem));
-                          DeviceManager().updateDeviceInfo(name: Platform.operatingSystem);
+                          NoCabCore().updateDeviceInfo(name: Platform.operatingSystem);
                         },
                       ),
                     ),
