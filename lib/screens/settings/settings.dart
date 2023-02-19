@@ -12,6 +12,7 @@ import 'package:nocab/screens/logs/logs.dart';
 import 'package:nocab/screens/settings/setting_card.dart';
 import 'package:nocab/services/settings/settings.dart';
 import 'package:provider/provider.dart';
+import 'package:nocab_core/nocab_core.dart';
 
 class Settings extends StatefulWidget {
   const Settings({Key? key}) : super(key: key);
@@ -94,9 +95,11 @@ class _SettingsState extends State<Settings> {
                         onSaved: (text) {
                           if (text.trim().isNotEmpty) {
                             SettingsService().setSettings(SettingsService().getSettings.copyWith(deviceName: text));
+                            DeviceManager().updateDeviceInfo(name: text);
                             return;
                           }
                           SettingsService().setSettings(SettingsService().getSettings.copyWith(deviceName: Platform.operatingSystem));
+                          DeviceManager().updateDeviceInfo(name: Platform.operatingSystem);
                         },
                       ),
                     ),
@@ -105,37 +108,6 @@ class _SettingsState extends State<Settings> {
                       child: Icon(Icons.arrow_forward_ios_rounded),
                     ),
                     leading: Icons.device_unknown_rounded,
-                  ),
-                  SettingCard(
-                    title: 'Network Interface',
-                    caption: 'The network interface to use for communication',
-                    leading: Icons.network_check_rounded,
-                    onTap: () {
-                      NetworkInterface.list().then((interfaces) {
-                        showModal(
-                          context: context,
-                          builder: (context) => SettingsDialogs.selection(
-                            title: "Network Interface",
-                            subtitle: "The network interface to use for communication",
-                            items: interfaces
-                                .map((e) => SettingsDialogSelectionItem<NetworkInterface>(
-                                      title: e.name.toUpperCase(),
-                                      subtitle: e.addresses.map((e) => e.address).join("\n"),
-                                      selected: SettingsService().getSettings.networkInterfaceName == e.name,
-                                      value: e,
-                                    ))
-                                .toList(),
-                            onItemClicked: (value) => SettingsService().setSettings(
-                              SettingsService().getSettings.copyWith(networkInterfaceName: value.name),
-                            ),
-                          ),
-                        );
-                      });
-                    },
-                    widget: const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Icon(Icons.arrow_forward_ios_rounded),
-                    ),
                   ),
                   SettingCard(
                     title: 'Theme Color',

@@ -5,6 +5,7 @@ import 'package:nocab/provider/theme_provider.dart';
 import 'package:nocab/screens/main_screen/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:nocab/services/database/database.dart';
+import 'package:nocab/services/network/network.dart';
 import 'package:nocab/services/settings/settings.dart';
 import 'package:nocab/services/share_intent/share_intent.dart';
 import 'package:nocab_core/nocab_core.dart';
@@ -17,12 +18,17 @@ Future<void> main() async {
   var isFirstRun = await SettingsService().initialize();
 
   ShareIntent().initialize(onData: (paths) => _processFilesAndShowDialog(paths));
+
   DeviceManager().initialize(
     SettingsService().getSettings.deviceName,
-    await SettingsService().getCurrentIp,
+    await Network().getLocalIp() ?? '',
     SettingsService().getSettings.mainPort,
   );
+
+  Network().initialize((ip) => DeviceManager().updateDeviceInfo(ip: ip));
+
   await Database().initialize();
+
   runApp(ChangeNotifierProvider(
     create: (context) => ThemeProvider(
       themeMode: SettingsService().getSettings.darkMode ? ThemeMode.dark : ThemeMode.light,

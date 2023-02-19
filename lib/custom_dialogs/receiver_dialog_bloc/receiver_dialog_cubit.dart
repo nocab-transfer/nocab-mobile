@@ -14,7 +14,7 @@ class ReceiverDialogCubit extends Cubit<ReceiverDialogState> {
 
   Future<void> startReceiver() async {
     await Radar().start();
-    await RequestListener().start(onError: (p0) => TransferFailed(null, p0.toString()));
+    await RequestListener().start(onError: (p0) => TransferFailed(null, p0.title));
 
     emit(ConnectionWait(DeviceManager().currentDeviceInfo));
 
@@ -47,7 +47,7 @@ class ReceiverDialogCubit extends Cubit<ReceiverDialogState> {
     request.accept(
       downloadDirectory: Directory(downloadPath),
       tempDirectory: await Directory.systemTemp.createTemp(),
-      onError: (p0) => TransferFailed(request.deviceInfo, p0.toString()),
+      onError: (p0) => TransferFailed(request.deviceInfo, p0.title),
     );
 
     request.linkedTransfer?.onEvent.listen((event) {
@@ -77,7 +77,7 @@ class ReceiverDialogCubit extends Cubit<ReceiverDialogState> {
   }
 
   Future<void> rejectRequest(ShareRequest request, {String? message}) async {
-    request.reject(info: message);
+    request.reject(info: message, onError: (p0) => TransferFailed(request.deviceInfo, p0.title));
   }
 
   Future<String?> getDownloadPath() async {
