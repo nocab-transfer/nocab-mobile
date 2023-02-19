@@ -34,7 +34,9 @@ dependencies:
   url_launcher: ^6.1.7
   easy_localization: ^3.0.1
   flutter_animate: ^2.0.1
-  receive_sharing_intent: ^1.4.5
+  receive_sharing_intent:
+    git:
+      url: https://github.com/nocab-transfer/receive_sharing_intent.git
   isar: ^3.0.5
   isar_flutter_libs: ^3.0.5
   uuid: ^3.0.7
