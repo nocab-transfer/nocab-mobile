@@ -8,6 +8,7 @@ import 'package:nocab/custom_dialogs/settings_dialogs/settings_dialogs.dart';
 import 'package:nocab/extensions/lang_code_to_name.dart';
 import 'package:nocab/models/settings_model.dart';
 import 'package:nocab/provider/theme_provider.dart';
+import 'package:nocab/screens/logs/logs.dart';
 import 'package:nocab/screens/settings/setting_card.dart';
 import 'package:nocab/services/settings/settings.dart';
 import 'package:provider/provider.dart';
@@ -49,10 +50,7 @@ class _SettingsState extends State<Settings> {
                 icon: const Icon(Icons.arrow_back_ios_rounded),
               ),
               const SizedBox(width: 8),
-              GestureDetector(
-                onDoubleTap: () {}, //Navigator.push(context, MaterialPageRoute(builder: (context) => const Logs())),
-                child: const Text("Settings"),
-              ),
+              const Text("Settings"),
             ],
           ),
           automaticallyImplyLeading: false,
@@ -276,6 +274,16 @@ class _SettingsState extends State<Settings> {
                                 ),
                               ],
                             )),
+                    widget: const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Icon(Icons.arrow_forward_ios_rounded),
+                    ),
+                  ),
+                  SettingCard(
+                    title: 'Transfer Logs',
+                    caption: 'View core tranfsers logs',
+                    leading: Icons.transfer_within_a_station_rounded,
+                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const Logs())),
                     widget: const Padding(
                       padding: EdgeInsets.all(8.0),
                       child: Icon(Icons.arrow_forward_ios_rounded),
