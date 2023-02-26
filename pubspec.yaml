@@ -52,7 +52,7 @@ dependencies:
 dev_dependencies:
   isar_generator: ^3.0.2
   build_runner: ^2.3.2
-  flutter_launcher_icons: ^0.11.0
+  flutter_launcher_icons: ^0.12.0
   flutter_lints: ^2.0.1
   flutter_test:
     sdk: flutter
