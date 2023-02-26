@@ -5,3 +5,4 @@ export 'package:nocab/custom_dialogs/receiver_dialog_bloc/receiver_dialog_state_
 export 'package:nocab/custom_dialogs/receiver_dialog_bloc/receiver_dialog_state_views/receiver_transferfailed.dart';
 export 'package:nocab/custom_dialogs/receiver_dialog_bloc/receiver_dialog_state_views/receiver_transferring.dart';
 export 'package:nocab/custom_dialogs/receiver_dialog_bloc/receiver_dialog_state_views/receiver_transfersuccess.dart';
+export 'package:nocab/custom_dialogs/receiver_dialog_bloc/receiver_dialog_state_views/receiver_transfercancelled.dart';

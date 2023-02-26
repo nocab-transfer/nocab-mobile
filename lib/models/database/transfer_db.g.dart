@@ -17,64 +17,69 @@ const TransferDatabaseSchema = CollectionSchema(
   name: r'Transfer',
   id: 2299428791821287909,
   properties: {
-    r'End Time': PropertySchema(
+    r'Cancelled At': PropertySchema(
       id: 0,
+      name: r'Cancelled At',
+      type: IsarType.dateTime,
+    ),
+    r'End Time': PropertySchema(
+      id: 1,
       name: r'End Time',
       type: IsarType.dateTime,
     ),
     r'Files': PropertySchema(
-      id: 1,
+      id: 2,
       name: r'Files',
       type: IsarType.objectList,
       target: r'FileDb',
     ),
     r'Managed By': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'Managed By',
       type: IsarType.byte,
       enumMap: _TransferDatabasemanagedByEnumValueMap,
     ),
     r'Message': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'Message',
       type: IsarType.string,
     ),
     r'Receiver Device': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'Receiver Device',
       type: IsarType.object,
       target: r'DeviceDb',
     ),
     r'Requested At': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'Requested At',
       type: IsarType.dateTime,
     ),
     r'Sender Device': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'Sender Device',
       type: IsarType.object,
       target: r'DeviceDb',
     ),
     r'Start Time': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'Start Time',
       type: IsarType.dateTime,
     ),
     r'Transfer Status': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'Transfer Status',
       type: IsarType.byte,
       enumMap: _TransferDatabasestatusEnumValueMap,
     ),
     r'Transfer Type': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'Transfer Type',
       type: IsarType.byte,
       enumMap: _TransferDatabasetypeEnumValueMap,
     ),
     r'Transfer Unique ID': PropertySchema(
-      id: 10,
+      id: 11,
       name: r'Transfer Unique ID',
       type: IsarType.string,
     )
@@ -129,32 +134,33 @@ void _transferDatabaseSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeDateTime(offsets[0], object.endedAt);
+  writer.writeDateTime(offsets[0], object.cancelledAt);
+  writer.writeDateTime(offsets[1], object.endedAt);
   writer.writeObjectList<FileDb>(
-    offsets[1],
+    offsets[2],
     allOffsets,
     FileDbSchema.serialize,
     object.files,
   );
-  writer.writeByte(offsets[2], object.managedBy.index);
-  writer.writeString(offsets[3], object.message);
+  writer.writeByte(offsets[3], object.managedBy.index);
+  writer.writeString(offsets[4], object.message);
   writer.writeObject<DeviceDb>(
-    offsets[4],
+    offsets[5],
     allOffsets,
     DeviceDbSchema.serialize,
     object.receiverDevice,
   );
-  writer.writeDateTime(offsets[5], object.requestedAt);
+  writer.writeDateTime(offsets[6], object.requestedAt);
   writer.writeObject<DeviceDb>(
-    offsets[6],
+    offsets[7],
     allOffsets,
     DeviceDbSchema.serialize,
     object.senderDevice,
   );
-  writer.writeDateTime(offsets[7], object.startedAt);
-  writer.writeByte(offsets[8], object.status.index);
-  writer.writeByte(offsets[9], object.type.index);
-  writer.writeString(offsets[10], object.transferUuid);
+  writer.writeDateTime(offsets[8], object.startedAt);
+  writer.writeByte(offsets[9], object.status.index);
+  writer.writeByte(offsets[10], object.type.index);
+  writer.writeString(offsets[11], object.transferUuid);
 }
 
 TransferDatabase _transferDatabaseDeserialize(
@@ -164,39 +170,40 @@ TransferDatabase _transferDatabaseDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = TransferDatabase();
-  object.endedAt = reader.readDateTimeOrNull(offsets[0]);
+  object.cancelledAt = reader.readDateTimeOrNull(offsets[0]);
+  object.endedAt = reader.readDateTimeOrNull(offsets[1]);
   object.files = reader.readObjectList<FileDb>(
-        offsets[1],
+        offsets[2],
         FileDbSchema.deserialize,
         allOffsets,
         FileDb(),
       ) ??
       [];
   object.managedBy = _TransferDatabasemanagedByValueEnumMap[
-          reader.readByteOrNull(offsets[2])] ??
+          reader.readByteOrNull(offsets[3])] ??
       TransferDbManagedBy.user;
-  object.message = reader.readStringOrNull(offsets[3]);
+  object.message = reader.readStringOrNull(offsets[4]);
   object.receiverDevice = reader.readObjectOrNull<DeviceDb>(
-        offsets[4],
+        offsets[5],
         DeviceDbSchema.deserialize,
         allOffsets,
       ) ??
       DeviceDb();
-  object.requestedAt = reader.readDateTime(offsets[5]);
+  object.requestedAt = reader.readDateTime(offsets[6]);
   object.senderDevice = reader.readObjectOrNull<DeviceDb>(
-        offsets[6],
+        offsets[7],
         DeviceDbSchema.deserialize,
         allOffsets,
       ) ??
       DeviceDb();
-  object.startedAt = reader.readDateTimeOrNull(offsets[7]);
+  object.startedAt = reader.readDateTimeOrNull(offsets[8]);
   object.status =
-      _TransferDatabasestatusValueEnumMap[reader.readByteOrNull(offsets[8])] ??
+      _TransferDatabasestatusValueEnumMap[reader.readByteOrNull(offsets[9])] ??
           TransferDbStatus.success;
   object.type =
-      _TransferDatabasetypeValueEnumMap[reader.readByteOrNull(offsets[9])] ??
+      _TransferDatabasetypeValueEnumMap[reader.readByteOrNull(offsets[10])] ??
           TransferDbType.download;
-  object.transferUuid = reader.readString(offsets[10]);
+  object.transferUuid = reader.readString(offsets[11]);
   object.id = id;
   return object;
 }
@@ -211,6 +218,8 @@ P _transferDatabaseDeserializeProp<P>(
     case 0:
       return (reader.readDateTimeOrNull(offset)) as P;
     case 1:
+      return (reader.readDateTimeOrNull(offset)) as P;
+    case 2:
       return (reader.readObjectList<FileDb>(
             offset,
             FileDbSchema.deserialize,
@@ -218,39 +227,39 @@ P _transferDatabaseDeserializeProp<P>(
             FileDb(),
           ) ??
           []) as P;
-    case 2:
+    case 3:
       return (_TransferDatabasemanagedByValueEnumMap[
               reader.readByteOrNull(offset)] ??
           TransferDbManagedBy.user) as P;
-    case 3:
-      return (reader.readStringOrNull(offset)) as P;
     case 4:
-      return (reader.readObjectOrNull<DeviceDb>(
-            offset,
-            DeviceDbSchema.deserialize,
-            allOffsets,
-          ) ??
-          DeviceDb()) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 5:
-      return (reader.readDateTime(offset)) as P;
-    case 6:
       return (reader.readObjectOrNull<DeviceDb>(
             offset,
             DeviceDbSchema.deserialize,
             allOffsets,
           ) ??
           DeviceDb()) as P;
+    case 6:
+      return (reader.readDateTime(offset)) as P;
     case 7:
-      return (reader.readDateTimeOrNull(offset)) as P;
+      return (reader.readObjectOrNull<DeviceDb>(
+            offset,
+            DeviceDbSchema.deserialize,
+            allOffsets,
+          ) ??
+          DeviceDb()) as P;
     case 8:
+      return (reader.readDateTimeOrNull(offset)) as P;
+    case 9:
       return (_TransferDatabasestatusValueEnumMap[
               reader.readByteOrNull(offset)] ??
           TransferDbStatus.success) as P;
-    case 9:
+    case 10:
       return (_TransferDatabasetypeValueEnumMap[
               reader.readByteOrNull(offset)] ??
           TransferDbType.download) as P;
-    case 10:
+    case 11:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -277,6 +286,7 @@ const _TransferDatabasestatusEnumValueMap = {
   'declined': 2,
   'ongoing': 3,
   'pendingForAcceptance': 4,
+  'cancelled': 5,
 };
 const _TransferDatabasestatusValueEnumMap = {
   0: TransferDbStatus.success,
@@ -284,6 +294,7 @@ const _TransferDatabasestatusValueEnumMap = {
   2: TransferDbStatus.declined,
   3: TransferDbStatus.ongoing,
   4: TransferDbStatus.pendingForAcceptance,
+  5: TransferDbStatus.cancelled,
 };
 const _TransferDatabasetypeEnumValueMap = {
   'download': 0,
@@ -388,6 +399,80 @@ extension TransferDatabaseQueryWhere
 
 extension TransferDatabaseQueryFilter
     on QueryBuilder<TransferDatabase, TransferDatabase, QFilterCondition> {
+  QueryBuilder<TransferDatabase, TransferDatabase, QAfterFilterCondition>
+      cancelledAtIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'Cancelled At',
+      ));
+    });
+  }
+
+  QueryBuilder<TransferDatabase, TransferDatabase, QAfterFilterCondition>
+      cancelledAtIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'Cancelled At',
+      ));
+    });
+  }
+
+  QueryBuilder<TransferDatabase, TransferDatabase, QAfterFilterCondition>
+      cancelledAtEqualTo(DateTime? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'Cancelled At',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TransferDatabase, TransferDatabase, QAfterFilterCondition>
+      cancelledAtGreaterThan(
+    DateTime? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'Cancelled At',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TransferDatabase, TransferDatabase, QAfterFilterCondition>
+      cancelledAtLessThan(
+    DateTime? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'Cancelled At',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TransferDatabase, TransferDatabase, QAfterFilterCondition>
+      cancelledAtBetween(
+    DateTime? lower,
+    DateTime? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'Cancelled At',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<TransferDatabase, TransferDatabase, QAfterFilterCondition>
       endedAtIsNull() {
     return QueryBuilder.apply(this, (query) {
@@ -1226,6 +1311,20 @@ extension TransferDatabaseQueryLinks
 extension TransferDatabaseQuerySortBy
     on QueryBuilder<TransferDatabase, TransferDatabase, QSortBy> {
   QueryBuilder<TransferDatabase, TransferDatabase, QAfterSortBy>
+      sortByCancelledAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'Cancelled At', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TransferDatabase, TransferDatabase, QAfterSortBy>
+      sortByCancelledAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'Cancelled At', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TransferDatabase, TransferDatabase, QAfterSortBy>
       sortByEndedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'End Time', Sort.asc);
@@ -1339,6 +1438,20 @@ extension TransferDatabaseQuerySortBy
 
 extension TransferDatabaseQuerySortThenBy
     on QueryBuilder<TransferDatabase, TransferDatabase, QSortThenBy> {
+  QueryBuilder<TransferDatabase, TransferDatabase, QAfterSortBy>
+      thenByCancelledAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'Cancelled At', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TransferDatabase, TransferDatabase, QAfterSortBy>
+      thenByCancelledAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'Cancelled At', Sort.desc);
+    });
+  }
+
   QueryBuilder<TransferDatabase, TransferDatabase, QAfterSortBy>
       thenByEndedAt() {
     return QueryBuilder.apply(this, (query) {
@@ -1467,6 +1580,13 @@ extension TransferDatabaseQuerySortThenBy
 extension TransferDatabaseQueryWhereDistinct
     on QueryBuilder<TransferDatabase, TransferDatabase, QDistinct> {
   QueryBuilder<TransferDatabase, TransferDatabase, QDistinct>
+      distinctByCancelledAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'Cancelled At');
+    });
+  }
+
+  QueryBuilder<TransferDatabase, TransferDatabase, QDistinct>
       distinctByEndedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'End Time');
@@ -1528,6 +1648,13 @@ extension TransferDatabaseQueryProperty
   QueryBuilder<TransferDatabase, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<TransferDatabase, DateTime?, QQueryOperations>
+      cancelledAtProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'Cancelled At');
     });
   }
 

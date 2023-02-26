@@ -1,6 +1,7 @@
 import 'package:nocab_core/nocab_core.dart';
 
 abstract class SenderDialogState {
+  final bool canPop = false;
   const SenderDialogState();
 }
 
@@ -14,6 +15,9 @@ class FileCacheLoading extends SenderDialogState {
 
 class FileSelectCancel extends SenderDialogState {
   const FileSelectCancel();
+
+  @override
+  bool get canPop => true;
 }
 
 class FileConfirmation extends SenderDialogState {
@@ -39,6 +43,9 @@ class RequestAccepted extends SenderDialogState {
 class RequestRejected extends SenderDialogState {
   final String message;
   const RequestRejected(this.message);
+
+  @override
+  bool get canPop => true;
 }
 
 class Transferring extends SenderDialogState {
@@ -62,10 +69,24 @@ class TransferSuccess extends SenderDialogState {
   final DeviceInfo serverDeviceInfo;
   final List<FileInfo> files;
   const TransferSuccess(this.serverDeviceInfo, this.files);
+
+  @override
+  bool get canPop => true;
 }
 
 class TransferFailed extends SenderDialogState {
   final DeviceInfo serverDeviceInfo;
   final String message;
   const TransferFailed(this.serverDeviceInfo, this.message);
+
+  @override
+  bool get canPop => true;
+}
+
+class TransferCancelled extends SenderDialogState {
+  final DeviceInfo serverDeviceInfo;
+  const TransferCancelled(this.serverDeviceInfo);
+
+  @override
+  bool get canPop => true;
 }

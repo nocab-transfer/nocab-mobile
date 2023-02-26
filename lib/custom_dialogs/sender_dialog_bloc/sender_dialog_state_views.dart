@@ -9,3 +9,4 @@ export 'sender_dialog_state_views/sender_senderinit.dart';
 export 'sender_dialog_state_views/sender_transferfailed.dart';
 export 'sender_dialog_state_views/sender_transferring.dart';
 export 'sender_dialog_state_views/sender_transfersuccess.dart';
+export 'sender_dialog_state_views/sender_transfercancelled.dart';
