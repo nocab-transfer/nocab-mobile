@@ -43,6 +43,7 @@ class ReceiverDialog extends StatelessWidget {
           filesTransferred: state.filesTransferred,
           progress: state.progress,
           speed: state.speed,
+          onCancel: () => context.read<ReceiverDialogCubit>().cancel(),
         );
       case TransferSuccess:
         return TransferSuccessView(serverDeviceInfo: (state as TransferSuccess).serverDeviceInfo, files: state.files);
@@ -50,6 +51,8 @@ class ReceiverDialog extends StatelessWidget {
         return TransferFailedView(
           message: (state as TransferFailed).message,
         );
+      case TransferCancelled:
+        return const TransferCancelledView();
       default:
         Navigator.pop(context);
         break;

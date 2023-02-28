@@ -1,10 +1,11 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:nocab_core/nocab_core.dart';
+import 'package:nocab/screens/logs/log_viewer.dart';
+import 'package:nocab/services/log_manager/log_manager.dart';
+import 'package:nocab/services/settings/settings.dart';
 import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
 
 class Logs extends StatefulWidget {
   const Logs({super.key});
@@ -14,22 +15,43 @@ class Logs extends StatefulWidget {
 }
 
 class _LogsState extends State<Logs> {
-  final ScrollController scrollController = ScrollController();
-  List logs = [];
+  final GlobalKey<AnimatedGridState> _gridKey = GlobalKey<AnimatedGridState>();
+  late final List<File> logFiles;
+  StreamSubscription? _logSubscription;
+
   @override
   void initState() {
     super.initState();
-    Logger().get(from: DateTime.now().subtract(const Duration(days: 1))).then((value) {
-      setState(() => logs = value);
+    logFiles = LogManager.getLogFiles..sort((a, b) => basenameWithoutExtension(b.path).compareTo(basenameWithoutExtension(a.path)));
 
-      Future.delayed(const Duration(milliseconds: 200), () {
-        scrollController.animateTo(
-          scrollController.position.maxScrollExtent + 100,
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.fastOutSlowIn,
-        );
-      });
+    _logSubscription = Directory(LogManager.logFolderPath).watch().listen((event) {
+      if (event.type == FileSystemEvent.delete) {
+        Future.delayed(const Duration(milliseconds: 200), () {
+          if (mounted) {
+            setState(() {
+              var index = logFiles.indexWhere((element) => element.path == event.path);
+              var file = logFiles.removeAt(index);
+              _gridKey.currentState?.removeItem(
+                index,
+                (context, animation) => FadeTransition(
+                  opacity: animation,
+                  child: ScaleTransition(
+                    scale: animation.drive(Tween(begin: 0.8, end: 1.0)),
+                    child: _buildLogFileGrid(context, file),
+                  ),
+                ),
+              );
+            });
+          }
+        });
+      }
     });
+  }
+
+  @override
+  void dispose() {
+    _logSubscription?.cancel();
+    super.dispose();
   }
 
   @override
@@ -39,6 +61,17 @@ class _LogsState extends State<Logs> {
         titleSpacing: 8,
         scrolledUnderElevation: 0,
         elevation: 0,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(16),
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Text(
+              "Logs older than 7 days are automatically deleted.",
+              style: Theme.of(context).textTheme.labelSmall,
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.max,
@@ -57,51 +90,148 @@ class _LogsState extends State<Logs> {
         automaticallyImplyLeading: false,
         backgroundColor: Colors.transparent,
         actions: [
-          IconButton(
-            onPressed: () async {
-              var location = await getDownloadPath();
-              if (location == null) return;
-              var file = File(join(location, "nocab_mobile_logs.txt"));
-              await Logger().exportLogsLast10Days(file);
-              Share.shareXFiles([XFile(file.path)], subject: 'Share NoCab Mobile Logs', text: 'Logs');
-            },
-            icon: const Icon(Icons.download_rounded),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            child: Text(
+              "(Count: ${logFiles.length} "
+              "Total Size: "
+              "${logFiles.fold(0, (previousValue, element) => previousValue + element.lengthSync()) / 1000} KB)",
+              style: Theme.of(context).textTheme.labelSmall,
+            ),
           ),
           const SizedBox(width: 8),
         ],
       ),
-      body: SingleChildScrollView(
-        controller: scrollController,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ListView.builder(
-            itemCount: logs.length,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemBuilder: (context, index) {
-              var log = logs[index];
-
-              return Text(log.toString());
-            },
+      body: Column(
+        children: [
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Center(
+                child: _buildGridView(logFiles),
+              ),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
 
-  Future<String?> getDownloadPath() async {
-    Directory? directory;
-    try {
-      if (Platform.isIOS) {
-        directory = await getApplicationDocumentsDirectory();
-      } else {
-        directory = Directory('/storage/emulated/0/Download');
-        // Put file in global download folder, if for an unknown reason it didn't exist, we fallback
-        if (!await directory.exists()) {
-          directory = await getExternalStorageDirectory();
-        }
-      }
-    } catch (err) {}
-    return directory?.path;
+  Widget _buildGridView(List<File> initialLogFiles) {
+    return AnimatedGrid(
+      key: _gridKey,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
+      ),
+      initialItemCount: initialLogFiles.length,
+      scrollDirection: Axis.vertical,
+      itemBuilder: (context, index, animation) {
+        return _buildLogFileGrid(
+          context,
+          initialLogFiles[index],
+        );
+      },
+    );
+  }
+
+  Widget _buildLogFileGrid(BuildContext context, File file) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.background,
+        border: Border.fromBorderSide(
+          BorderSide(
+            color: file.path == LogManager.currentLogFile.path
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.secondary.withOpacity(0.4),
+            width: 2,
+          ),
+        ),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Material(
+        type: MaterialType.transparency,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(8),
+          onTap: () => Navigator.push(
+              context,
+              PageRouteBuilder(
+                opaque: false,
+                barrierColor: Colors.black.withOpacity(0.5),
+                transitionDuration: const Duration(milliseconds: 200),
+                reverseTransitionDuration: const Duration(milliseconds: 200),
+                pageBuilder: (context, animation, secondaryAnimation) {
+                  return FadeTransition(
+                    opacity: animation.drive(CurveTween(curve: Curves.easeInOut)),
+                    child: ScaleTransition(
+                      scale: animation.drive(Tween(begin: 0.90, end: 1.0).chain(CurveTween(curve: Curves.easeInOut))),
+                      //opacity: animation.drive(CurveTween(curve: Curves.easeInOut)),
+                      child: LogViewer(file: file),
+                    ),
+                  );
+                },
+              )),
+          child: Column(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Hero(
+                        tag: "${basenameWithoutExtension(file.path)}icon",
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: file.path == LogManager.currentLogFile.path
+                                ? Theme.of(context).colorScheme.primaryContainer
+                                : Theme.of(context).colorScheme.secondaryContainer,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(12),
+                            child: Icon(
+                              Icons.insert_drive_file_rounded,
+                              color: file.path == LogManager.currentLogFile.path
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Theme.of(context).colorScheme.secondary,
+                              size: 24,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Hero(
+                        tag: "${basenameWithoutExtension(file.path)}text",
+                        child: Text(
+                          basenameWithoutExtension(file.path),
+                          style: Theme.of(context).textTheme.labelLarge,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        file.existsSync()
+                            ? "Last Modified:\n${SettingsService().getSettings.dateFormatType.dateFormat.format(file.lastModifiedSync())}"
+                            : "File Deleted",
+                        style: Theme.of(context).textTheme.labelSmall,
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        file.path == LogManager.currentLogFile.path ? "CURRENT LOG" : "OLD LOG",
+                        style: Theme.of(context).textTheme.labelSmall,
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

@@ -8,6 +8,7 @@ class TransferringView extends StatelessWidget {
   final FileInfo currentFile;
   final double speed;
   final double progress;
+  final Function() onCancel;
 
   const TransferringView({
     Key? key,
@@ -17,6 +18,7 @@ class TransferringView extends StatelessWidget {
     required this.currentFile,
     required this.speed,
     required this.progress,
+    required this.onCancel,
   }) : super(key: key);
 
   @override
@@ -60,7 +62,7 @@ class TransferringView extends StatelessWidget {
                                 ),
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: Icon(Icons.phonelink_rounded, color: Theme.of(context).colorScheme.onPrimary),
+                                  child: Icon(Icons.download_rounded, color: Theme.of(context).colorScheme.onPrimary),
                                 ),
                               ),
                               Padding(
@@ -144,7 +146,7 @@ class TransferringView extends StatelessWidget {
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.symmetric(vertical: 2.0),
-                                        child: Text("${(currentFile.byteSize / 1024 / 1024).toStringAsFixed(2)}MB",
+                                        child: Text("${(currentFile.byteSize / 1000 / 1000).toStringAsFixed(2)}MB",
                                             style: TextStyle(
                                                 fontSize: 14, fontWeight: FontWeight.w200, color: Theme.of(context).colorScheme.onSurfaceVariant)),
                                       ),
@@ -183,7 +185,7 @@ class TransferringView extends StatelessWidget {
                       Align(
                         alignment: Alignment.bottomRight,
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: onCancel,
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),

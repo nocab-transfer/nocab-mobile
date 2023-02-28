@@ -181,19 +181,13 @@ class MainScreen extends StatelessWidget {
   }
 
   void _sendHandler(BuildContext context) {
-    showModal(
-        context: context,
-        configuration: const FadeScaleTransitionConfiguration(barrierDismissible: false),
-        builder: ((context) => const SenderDialog()));
+    showModal(context: context, builder: ((context) => const SenderDialog()));
   }
 
   void _receiveHandler(BuildContext context) {
     Permission.storage.request().then((value) {
       if (value.isGranted) {
-        showModal(
-            context: context,
-            configuration: const FadeScaleTransitionConfiguration(barrierDismissible: false),
-            builder: ((context) => const ReceiverDialog()));
+        showModal(context: context, builder: ((context) => const ReceiverDialog()));
       }
     });
   }

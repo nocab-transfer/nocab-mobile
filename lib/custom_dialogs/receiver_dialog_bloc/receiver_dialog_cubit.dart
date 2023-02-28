@@ -11,18 +11,24 @@ class ReceiverDialogCubit extends Cubit<ReceiverDialogState> {
   ReceiverDialogCubit() : super(const ReceiverInit());
 
   StreamSubscription? _requestSubscription;
+  Transfer? _transfer;
 
   Future<void> startReceiver() async {
     await Radar().start();
-    await RequestListener().start(onError: (p0) => TransferFailed(null, p0.title));
+    try {
+      await RequestListener().start();
+    } catch (e) {
+      emit(ConnectionWait(NoCabCore().currentDeviceInfo));
+      return;
+    }
 
-    emit(ConnectionWait(DeviceManager().currentDeviceInfo));
+    emit(ConnectionWait(NoCabCore().currentDeviceInfo));
 
     _requestSubscription = RequestListener().onRequest.listen((event) {
       stopReceiver();
       Database().registerRequest(
         request: event,
-        receiverDeviceInfo: DeviceManager().currentDeviceInfo,
+        receiverDeviceInfo: NoCabCore().currentDeviceInfo,
         senderDeviceInfo: event.deviceInfo,
         thisIsSender: false,
       );
@@ -44,12 +50,17 @@ class ReceiverDialogCubit extends Cubit<ReceiverDialogState> {
 
     if (downloadPath == null) return;
 
-    request.accept(
-      downloadDirectory: Directory(downloadPath),
-      tempDirectory: await Directory.systemTemp.createTemp(),
-      onError: (p0) => TransferFailed(request.deviceInfo, p0.title),
-    );
+    try {
+      request.accept(
+        downloadDirectory: Directory(downloadPath),
+        tempDirectory: await Directory.systemTemp.createTemp(),
+      );
+    } catch (e) {
+      emit(TransferFailed(request.deviceInfo, e.toString()));
+      return;
+    }
 
+    _transfer = request.linkedTransfer;
     request.linkedTransfer?.onEvent.listen((event) {
       switch (event.runtimeType) {
         case ProgressReport:
@@ -58,7 +69,7 @@ class ReceiverDialogCubit extends Cubit<ReceiverDialogState> {
             request.files,
             event.filesTransferred,
             event.currentFile,
-            event.speed / 1024 / 1024,
+            event.speed / 1000 / 1000,
             event.progress * 100,
             request.deviceInfo,
           ));
@@ -71,13 +82,25 @@ class ReceiverDialogCubit extends Cubit<ReceiverDialogState> {
           event as ErrorReport;
           emit(TransferFailed(request.deviceInfo, event.error.title));
           break;
+        case CancelReport:
+          event as CancelReport;
+          emit(TransferCancelled(request.deviceInfo));
+          break;
         default:
       }
     });
   }
 
   Future<void> rejectRequest(ShareRequest request, {String? message}) async {
-    request.reject(info: message, onError: (p0) => TransferFailed(request.deviceInfo, p0.title));
+    try {
+      request.reject(info: message);
+    } catch (e) {
+      emit(TransferFailed(request.deviceInfo, e.toString()));
+    }
+  }
+
+  void cancel() {
+    _transfer?.cancel();
   }
 
   Future<String?> getDownloadPath() async {

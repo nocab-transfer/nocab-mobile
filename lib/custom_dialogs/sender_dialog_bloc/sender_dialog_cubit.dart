@@ -10,6 +10,8 @@ import 'package:nocab_core/nocab_core.dart';
 class SenderDialogCubit extends Cubit<SenderDialogState> {
   SenderDialogCubit() : super(const SenderInit());
 
+  Transfer? _transfer;
+
   Future<void> start(List<FileInfo>? files) async {
     if (files?.isNotEmpty ?? false) return emit(FileConfirmation(files!));
 
@@ -40,7 +42,8 @@ class SenderDialogCubit extends Cubit<SenderDialogState> {
   Future<void> send({required DeviceInfo serverDeviceInfo, required List<FileInfo> files}) async {
     emit(Connecting(serverDeviceInfo));
 
-    ShareRequest shareRequest = RequestMaker.create(files: files, transferPort: await Network.getUnusedPort());
+    ShareRequest shareRequest =
+        RequestMaker.create(files: files, transferPort: await Network.getUnusedPort(), controlPort: await Network.getUnusedPort());
 
     Database().registerRequest(
       request: shareRequest,
@@ -49,10 +52,13 @@ class SenderDialogCubit extends Cubit<SenderDialogState> {
       thisIsSender: true,
     );
 
-    RequestMaker.requestTo(serverDeviceInfo, request: shareRequest, onError: (p0) => emit(TransferFailed(serverDeviceInfo, p0.title)));
-    if (state is TransferFailed) return;
-
-    emit(RequestSent(serverDeviceInfo));
+    try {
+      RequestMaker.requestTo(serverDeviceInfo, request: shareRequest);
+      emit(RequestSent(serverDeviceInfo));
+    } catch (e) {
+      emit(TransferFailed(serverDeviceInfo, e.toString()));
+      return;
+    }
 
     var response = await shareRequest.onResponse;
 
@@ -62,7 +68,7 @@ class SenderDialogCubit extends Cubit<SenderDialogState> {
     }
 
     emit(RequestAccepted(serverDeviceInfo));
-
+    _transfer = shareRequest.linkedTransfer!;
     shareRequest.linkedTransfer!.onEvent.listen((event) {
       switch (event.runtimeType) {
         case ProgressReport:
@@ -71,7 +77,7 @@ class SenderDialogCubit extends Cubit<SenderDialogState> {
             shareRequest.files,
             event.filesTransferred,
             event.currentFile,
-            event.speed / 1024 / 1024,
+            event.speed / 1000 / 1000,
             event.progress * 100,
             shareRequest.deviceInfo,
           ));
@@ -84,8 +90,16 @@ class SenderDialogCubit extends Cubit<SenderDialogState> {
           event as ErrorReport;
           emit(TransferFailed(serverDeviceInfo, event.error.title));
           break;
+        case CancelReport:
+          event as CancelReport;
+          emit(TransferCancelled(serverDeviceInfo));
+          break;
         default:
       }
     });
+  }
+
+  void cancel() {
+    _transfer?.cancel();
   }
 }

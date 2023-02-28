@@ -61,3 +61,11 @@ class TransferFailed extends ReceiverDialogState {
   @override
   bool get canPop => true;
 }
+
+class TransferCancelled extends ReceiverDialogState {
+  final DeviceInfo serverDeviceInfo;
+  const TransferCancelled(this.serverDeviceInfo);
+
+  @override
+  bool get canPop => true;
+}

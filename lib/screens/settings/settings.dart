@@ -50,10 +50,7 @@ class _SettingsState extends State<Settings> {
                 icon: const Icon(Icons.arrow_back_ios_rounded),
               ),
               const SizedBox(width: 8),
-              GestureDetector(
-                onDoubleTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const Logs())),
-                child: const Text("Settings"),
-              ),
+              const Text("Settings"),
             ],
           ),
           automaticallyImplyLeading: false,
@@ -95,11 +92,11 @@ class _SettingsState extends State<Settings> {
                         onSaved: (text) {
                           if (text.trim().isNotEmpty) {
                             SettingsService().setSettings(SettingsService().getSettings.copyWith(deviceName: text));
-                            DeviceManager().updateDeviceInfo(name: text);
+                            NoCabCore().updateDeviceInfo(name: text);
                             return;
                           }
                           SettingsService().setSettings(SettingsService().getSettings.copyWith(deviceName: Platform.operatingSystem));
-                          DeviceManager().updateDeviceInfo(name: Platform.operatingSystem);
+                          NoCabCore().updateDeviceInfo(name: Platform.operatingSystem);
                         },
                       ),
                     ),
@@ -277,6 +274,16 @@ class _SettingsState extends State<Settings> {
                                 ),
                               ],
                             )),
+                    widget: const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Icon(Icons.arrow_forward_ios_rounded),
+                    ),
+                  ),
+                  SettingCard(
+                    title: 'Transfer Logs',
+                    caption: 'View core tranfsers logs',
+                    leading: Icons.transfer_within_a_station_rounded,
+                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const Logs())),
                     widget: const Padding(
                       padding: EdgeInsets.all(8.0),
                       child: Icon(Icons.arrow_forward_ios_rounded),

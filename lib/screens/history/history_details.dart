@@ -91,6 +91,10 @@ class _HistoryDetailsState extends State<HistoryDetails> {
                         if (widget.transfer.endedAt != null) ...[
                           _buildTransferInfoCard("Ended At", SettingsService().getSettings.dateFormatType.dateFormat.format(widget.transfer.endedAt!))
                         ],
+                        if (widget.transfer.cancelledAt != null) ...[
+                          _buildTransferInfoCard(
+                              "Cancelled At", SettingsService().getSettings.dateFormatType.dateFormat.format(widget.transfer.cancelledAt!))
+                        ],
                       ],
                     ),
                     const SizedBox(height: 16),

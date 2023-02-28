@@ -13,7 +13,7 @@ class DeviceFinderCubit extends Cubit<DeviceFinderState> {
   Future<void> startScanning() async {
     timer = Timer.periodic(const Duration(seconds: 3), (_) async {
       if (isClosed) timer?.cancel();
-      Radar.searchForDevices(SettingsService().getSettings.finderPort).listen((event) {
+      Radar.searchForDevices(radarPort: SettingsService().getSettings.finderPort).listen((event) {
         if (event.isNotEmpty && !isClosed) {
           emit(Found(event));
         } else if (!isClosed) {
