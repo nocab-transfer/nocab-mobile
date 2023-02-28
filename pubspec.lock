@@ -594,8 +594,8 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: transfer-controller
-      resolved-ref: "8956dee61e6202065b9eb48de81558bcaf2c9051"
+      ref: HEAD
+      resolved-ref: e0d64d5773235cd6c0e24c38f8551b855bf12ddb
       url: "https://github.com/nocab-transfer/nocab-core.git"
     source: git
     version: "1.0.0"
@@ -603,8 +603,8 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: pure-dart
-      resolved-ref: "3f2249c9f44dfe7d5bd2371cf132e4b58556d2a3"
+      ref: HEAD
+      resolved-ref: "19ebc582fcdd57c8719a7ef9f75cffdf6d0b660d"
       url: "https://github.com/nocab-transfer/nocab-logger.git"
     source: git
     version: "1.0.0"
