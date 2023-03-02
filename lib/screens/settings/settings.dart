@@ -261,29 +261,41 @@ class _SettingsState extends State<Settings> {
                               title: "Delete History",
                               message: "You are about to delete history. This action cannot be undone",
                               actions: [
-                                TextButton.icon(
+                                FilledButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  style: FilledButton.styleFrom(
+                                    textStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+                                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                                    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(18))),
+                                    minimumSize: const Size(0, 40),
+                                    maximumSize: const Size(90, 40),
+                                  ),
+                                  child: const Text(
+                                    'Cancel',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                                OutlinedButton(
                                   onPressed: () => Database().deleteAllTransfers().then((value) {
                                     Navigator.pop(context);
                                   }),
-                                  icon: const Icon(Icons.loop_rounded),
-                                  label: const Text('Confirm'),
-                                  style: TextButton.styleFrom(
-                                    foregroundColor: Colors.red,
-                                    //textStyle: Theme.of(context).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold),
-                                    //padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context),
                                   style: OutlinedButton.styleFrom(
-                                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                                    backgroundColor: Theme.of(context).colorScheme.primary,
-                                    //textStyle: Theme.of(context).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold),
-                                    //side: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
-                                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                                    foregroundColor: Colors.red,
+                                    textStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+                                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                                    side: const BorderSide(color: Colors.red, width: 2, strokeAlign: BorderSide.strokeAlignInside),
+                                    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(18))),
+                                    minimumSize: const Size(0, 40),
+                                    maximumSize: const Size(90, 40),
                                   ),
-                                  child: const Text('Cancel'),
+                                  //icon: const Icon(Icons.delete_outline_rounded),
+                                  child: const Text(
+                                    'Confirm',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
                               ],
                             )),
@@ -303,29 +315,40 @@ class _SettingsState extends State<Settings> {
                               title: "Regenerate Settings",
                               message: "This will delete all your settings and regenerate them. Are you sure you want to continue?",
                               actions: [
-                                TextButton.icon(
-                                  onPressed: () => SettingsService().recreateSettings().then((value) {
-                                    Navigator.pop(context);
-                                  }),
-                                  icon: const Icon(Icons.loop_rounded),
-                                  label: const Text('Confirm'),
-                                  style: TextButton.styleFrom(
-                                    foregroundColor: Colors.red,
-                                    //textStyle: Theme.of(context).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold),
-                                    //padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                                FilledButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  style: FilledButton.styleFrom(
+                                    textStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+                                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                                    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(18))),
+                                    minimumSize: const Size(0, 40),
+                                    maximumSize: const Size(90, 40),
+                                  ),
+                                  child: const Text(
+                                    'Cancel',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                                 const SizedBox(width: 8),
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context),
+                                OutlinedButton(
+                                  onPressed: () => SettingsService().recreateSettings().then((value) {
+                                    Navigator.pop(context);
+                                  }),
                                   style: OutlinedButton.styleFrom(
-                                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                                    backgroundColor: Theme.of(context).colorScheme.primary,
-                                    //textStyle: Theme.of(context).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold),
-                                    //side: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
-                                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                                    foregroundColor: Colors.red,
+                                    textStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+                                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                                    side: const BorderSide(color: Colors.red, width: 2, strokeAlign: BorderSide.strokeAlignInside),
+                                    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(18))),
+                                    minimumSize: const Size(0, 40),
+                                    maximumSize: const Size(90, 40),
                                   ),
-                                  child: const Text('Cancel'),
+                                  child: const Text(
+                                    'Confirm',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
                               ],
                             )),

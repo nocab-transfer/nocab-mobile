@@ -30,8 +30,8 @@ class AboutDialogCustomized extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                   child: const Image(
                     image: AssetImage('assets/icon/ic_launcher.png'),
-                    height: 70,
-                    width: 70,
+                    height: 50,
+                    width: 50,
                   ),
                 ),
                 children: [
