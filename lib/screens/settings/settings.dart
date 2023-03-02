@@ -11,6 +11,7 @@ import 'package:nocab/provider/theme_provider.dart';
 import 'package:nocab/screens/logs/logs.dart';
 import 'package:nocab/screens/settings/about_dialog.dart';
 import 'package:nocab/screens/settings/setting_card.dart';
+import 'package:nocab/services/database/database.dart';
 import 'package:nocab/services/settings/settings.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
@@ -244,6 +245,48 @@ class _SettingsState extends State<Settings> {
                         ),
                       ),
                     ),
+                    widget: const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Icon(Icons.arrow_forward_ios_rounded),
+                    ),
+                  ),
+                  SettingCard(
+                    title: 'Delete All History',
+                    caption: 'Delete all history. This action cannot be undone.',
+                    leading: Icons.delete_forever_rounded,
+                    dangerous: true,
+                    onTap: () => showModal(
+                        context: context,
+                        builder: (context) => AlertBox(
+                              title: "Delete History",
+                              message: "You are about to delete history. This action cannot be undone",
+                              actions: [
+                                TextButton.icon(
+                                  onPressed: () => Database().deleteAllTransfers().then((value) {
+                                    Navigator.pop(context);
+                                  }),
+                                  icon: const Icon(Icons.loop_rounded),
+                                  label: const Text('Confirm'),
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: Colors.red,
+                                    //textStyle: Theme.of(context).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold),
+                                    //padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                                    backgroundColor: Theme.of(context).colorScheme.primary,
+                                    //textStyle: Theme.of(context).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold),
+                                    //side: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
+                                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                                  ),
+                                  child: const Text('Cancel'),
+                                ),
+                              ],
+                            )),
                     widget: const Padding(
                       padding: EdgeInsets.all(8.0),
                       child: Icon(Icons.arrow_forward_ios_rounded),
