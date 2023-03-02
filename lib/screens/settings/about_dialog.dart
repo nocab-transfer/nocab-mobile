@@ -58,7 +58,7 @@ class AboutDialogCustomized extends StatelessWidget {
                           ),
                           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                             IconButton(
-                              onPressed: () => launchUrlString("mailto:'berkekbgz@gmail.com'"),
+                              onPressed: () => launchUrlString("mailto:'berkekbgz@gmail.com'", mode: LaunchMode.externalApplication),
                               style: IconButton.styleFrom(
                                 shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
                                 foregroundColor: Theme.of(context).colorScheme.primary,
@@ -67,7 +67,7 @@ class AboutDialogCustomized extends StatelessWidget {
                             ),
                             const SizedBox(width: 8),
                             IconButton(
-                              onPressed: () => launchUrlString("https://twitter.com/berkekbgz"),
+                              onPressed: () => launchUrlString("https://twitter.com/berkekbgz", mode: LaunchMode.externalApplication),
                               style: IconButton.styleFrom(
                                 shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
                                 foregroundColor: Theme.of(context).colorScheme.primary,
@@ -76,7 +76,7 @@ class AboutDialogCustomized extends StatelessWidget {
                             ),
                             const SizedBox(width: 8),
                             IconButton(
-                              onPressed: () => launchUrlString("https://discord.gg/4uB5QgPgab"),
+                              onPressed: () => launchUrlString("https://discord.gg/4uB5QgPgab", mode: LaunchMode.externalApplication),
                               style: IconButton.styleFrom(
                                 shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
                                 foregroundColor: Theme.of(context).colorScheme.primary,
@@ -119,7 +119,7 @@ class AboutDialogCustomized extends StatelessWidget {
                                             child: Tooltip(
                                               message: snapshot.data![index]['login'],
                                               child: InkWell(
-                                                onTap: () => launchUrlString(snapshot.data![index]['html_url']),
+                                                onTap: () => launchUrlString(snapshot.data![index]['html_url'], mode: LaunchMode.externalApplication),
                                                 child: CircleAvatar(
                                                   backgroundImage: NetworkImage(snapshot.data![index]['avatar_url']),
                                                   radius: 17,

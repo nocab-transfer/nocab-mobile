@@ -20,7 +20,7 @@ class SponsorProviders extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 2.0),
             child: IconButton(
               icon: Sponsors.getSponsors[index].logo ?? const Icon(Icons.error_outline_rounded),
-              onPressed: () => launchUrlString(Sponsors.getSponsors[index].url),
+              onPressed: () => launchUrlString(Sponsors.getSponsors[index].url, mode: LaunchMode.externalApplication),
               style: TextButton.styleFrom(
                   foregroundColor: Theme.of(context).colorScheme.primary,
                   shape: RoundedRectangleBorder(
