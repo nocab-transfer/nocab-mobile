@@ -85,7 +85,7 @@ class AboutDialogCustomized extends StatelessWidget {
                             ),
                           ]),
                           Divider(color: Theme.of(context).colorScheme.secondary),
-                          Text('Contributors', style: Theme.of(context).textTheme.titleMedium),
+                          Text('Contributors', style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600)),
                           const SizedBox(height: 8),
                           Container(
                             decoration: const BoxDecoration(
