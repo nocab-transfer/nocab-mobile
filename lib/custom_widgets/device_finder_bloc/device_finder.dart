@@ -43,21 +43,18 @@ class _DeviceFinderState extends State<DeviceFinder> {
         },
         builder: (context, state) {
           switch (state.runtimeType) {
-            case NoDevice:
-              return _buildNoDevice();
-            case Found:
-              return _buildDeviceList((state as Found).devices);
-            default:
-              return _buildNoDevice();
+            case NoDevice: return _buildNoDevice();
+            case Found: return _buildDeviceList((state as Found).devices);
+            default: return _buildNoDevice();
           }
         },
       );
 
   Widget _buildNoDevice() {
-    return Center(
+    return const Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        children: const [
+        children: [
           Padding(
             padding: EdgeInsets.all(8.0),
             child: SizedBox(

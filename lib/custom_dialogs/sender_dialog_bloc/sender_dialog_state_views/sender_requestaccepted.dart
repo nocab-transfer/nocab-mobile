@@ -17,8 +17,8 @@ class RequestAcceptedView extends StatelessWidget {
           color: Theme.of(context).colorScheme.background,
           borderRadius: BorderRadius.circular(20),
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
+        child: const Padding(
+          padding: EdgeInsets.all(8.0),
           child: SizedBox(
             height: 208,
             width: 150,
@@ -26,7 +26,7 @@ class RequestAcceptedView extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
+                children: [
                   Center(
                     child: Icon(Icons.check, color: Colors.green, size: 50),
                   ),
