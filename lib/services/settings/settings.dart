@@ -75,6 +75,7 @@ class SettingsService {
               ? (await getApplicationDocumentsDirectory()).path
               : (await getDownloadsDirectory())!.path,
       dateFormatType: DateFormatType.base24,
+      hideSponsorSnackbar: false,
     );
   }
 

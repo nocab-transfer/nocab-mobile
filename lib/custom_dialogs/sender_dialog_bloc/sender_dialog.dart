@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nocab/custom_widgets/sponsor_related/sponsor_snackbar.dart';
+import 'package:nocab/extensions/size_extension.dart';
+import 'package:nocab/models/database/transfer_db.dart';
+import 'package:nocab/services/database/database.dart';
+import 'package:nocab/services/settings/settings.dart';
 import 'package:nocab_core/nocab_core.dart';
 
 import 'sender_dialog_cubit.dart';
@@ -15,7 +20,17 @@ class SenderDialog extends StatelessWidget {
     return BlocProvider(
       create: (context) => SenderDialogCubit()..start(files),
       child: BlocConsumer<SenderDialogCubit, SenderDialogState>(
-        listener: (context, state) {},
+        listener: (context, state) async {
+          if (state is TransferSuccess && !SettingsService().getSettings.hideSponsorSnackbar) {
+            await Future.delayed(const Duration(seconds: 1)); // wait for database to update
+            int successfullTransfers = await Database().getCountFiltered(status: TransferDbStatus.success);
+            int latestTransferSize = state.files.fold(0, (totalSize, element) => totalSize! + element.byteSize) ?? 0;
+            if (successfullTransfers == 0) return;
+            if (successfullTransfers == 2 || successfullTransfers % 10 == 0 || latestTransferSize > 1.gbToBytes) {
+              if (context.mounted) SponsorSnackbar.show(context, latestTransferSize: latestTransferSize, transferCount: successfullTransfers);
+            }
+          }
+        },
         builder: (context, state) => WillPopScope(
           onWillPop: () async => state.canPop,
           child: buildWidget(context, state),
@@ -23,8 +38,6 @@ class SenderDialog extends StatelessWidget {
       ),
     );
   }
-
-  //onWillPop: () async => state.canPop
 
   Widget buildWidget(BuildContext context, SenderDialogState state) {
     switch (state.runtimeType) {

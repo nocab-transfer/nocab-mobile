@@ -9,8 +9,10 @@ import 'package:nocab/extensions/lang_code_to_name.dart';
 import 'package:nocab/models/settings_model.dart';
 import 'package:nocab/provider/theme_provider.dart';
 import 'package:nocab/screens/logs/logs.dart';
+import 'package:nocab/screens/settings/about_dialog.dart';
 import 'package:nocab/screens/settings/setting_card.dart';
 import 'package:nocab/services/settings/settings.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:nocab_core/nocab_core.dart';
 
@@ -22,6 +24,13 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
+  String? version;
+  @override
+  void initState() {
+    super.initState();
+    PackageInfo.fromPlatform().then((value) => version = value.version);
+  }
+
   @override
   Widget build(BuildContext context) {
     var switchIcon = MaterialStateProperty.resolveWith<Icon?>(
@@ -57,7 +66,10 @@ class _SettingsState extends State<Settings> {
           backgroundColor: Colors.transparent,
           actions: [
             OutlinedButton.icon(
-              onPressed: () {}, // TODO: Add about
+              onPressed: () => showModal(
+                context: context,
+                builder: (context) => AboutDialogCustomized(version: version),
+              ),
               icon: const Icon(Icons.question_mark_rounded, size: 16),
               label: const Text('About'),
             ),

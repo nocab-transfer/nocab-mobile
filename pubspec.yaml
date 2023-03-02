@@ -76,7 +76,11 @@ flutter:
     - assets/images/paperplane.svg
     - assets/images/airplane.svg
     - assets/images/history_empty_state.svg
+    - assets/icon/ic_launcher.png
   fonts:
     - family: VarelaRound
       fonts:
         - asset: assets/fonts/VarelaRound-Regular.ttf
+    - family:  CustomIcons
+      fonts:
+        - asset: assets/fonts/CustomIcons.ttf

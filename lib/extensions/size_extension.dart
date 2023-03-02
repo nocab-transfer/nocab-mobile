@@ -19,3 +19,7 @@ extension FormatDouble on double {
     return '${(this / pow(1000, i)).toStringAsFixed(2)} ${useName ? names[i] : suffixes[i]}';
   }
 }
+
+extension ConvertSizes on int {
+  int get gbToBytes => this * 1000 * 1000 * 1000;
+}

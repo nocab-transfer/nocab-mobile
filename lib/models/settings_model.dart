@@ -10,6 +10,7 @@ class SettingsModel {
   late final Locale locale;
   late String downloadPath;
   late DateFormatType dateFormatType;
+  late bool hideSponsorSnackbar;
 
   SettingsModel({
     required this.deviceName,
@@ -20,6 +21,7 @@ class SettingsModel {
     required this.seedColor,
     required this.downloadPath,
     required this.dateFormatType,
+    required this.hideSponsorSnackbar,
   });
 
   SettingsModel.fromJson(Map<String, dynamic> json) {
@@ -30,7 +32,8 @@ class SettingsModel {
     locale = Locale(json['language']);
     seedColor = Color(json['seedColor']);
     downloadPath = json['downloadPath'];
-    dateFormatType = DateFormatType.getFromName(json['dateFormatType'] ?? "normal24");
+    dateFormatType = DateFormatType.getFromName(json['dateFormatType'] ?? DateFormatType.base24.name);
+    hideSponsorSnackbar = json['hideSponsorSnackbar'] ?? false;
   }
 
   Map<String, dynamic> toJson() {
@@ -43,6 +46,7 @@ class SettingsModel {
     data['seedColor'] = seedColor.value;
     data['downloadPath'] = downloadPath;
     data['dateFormatType'] = dateFormatType.name;
+    data['hideSponsorSnackbar'] = hideSponsorSnackbar;
     return data;
   }
 }
@@ -59,6 +63,7 @@ extension SettingsExtenios on SettingsModel {
     String? language,
     String? downloadPath,
     DateFormatType? dateFormatType,
+    bool? hideSponsorSnackbar,
   }) {
     return SettingsModel(
       deviceName: deviceName ?? this.deviceName,
@@ -69,6 +74,7 @@ extension SettingsExtenios on SettingsModel {
       locale: Locale(language ?? locale.languageCode),
       downloadPath: downloadPath ?? this.downloadPath,
       dateFormatType: dateFormatType ?? this.dateFormatType,
+      hideSponsorSnackbar: hideSponsorSnackbar ?? this.hideSponsorSnackbar,
     );
   }
 }
@@ -77,8 +83,8 @@ enum DateFormatType {
   base24("HH:mm dd/MM/yyyy"),
   base12("hh:mm a dd/MM/yyyy"),
 
-  imAmerican("hh:mm a MM/dd/yyyy"),
-  imAsian("HH:mm yyyy/MM/dd");
+  american("hh:mm a MM/dd/yyyy"),
+  asian("HH:mm yyyy/MM/dd");
 
   const DateFormatType(this.stringFormat);
   final String stringFormat;
